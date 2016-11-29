@@ -39,6 +39,7 @@ PagRevolutionObject::PagRevolutionObject(int _numPuntosPerfilOriginal, int _numD
 	slices = _slices;
 
 	if (slices == 0) slices++;
+	slices++;
 
 }
 
@@ -81,8 +82,8 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else geometria = nullptr;
 
 	if (orig.geometriaBottomTape != nullptr) {
-		geometriaBottomTape = new Geometria[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		geometriaBottomTape = new Geometria[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			geometriaBottomTape[i].vertice = orig.geometriaBottomTape[i].vertice;
 			geometriaBottomTape[i].normal = orig.geometriaBottomTape[i].normal;
 			geometriaBottomTape[i].tangente = orig.geometriaBottomTape[i].tangente;
@@ -91,8 +92,8 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else geometriaBottomTape = nullptr;
 
 	if (orig.geometriaTopTape != nullptr) {
-		geometriaTopTape = new Geometria[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		geometriaTopTape = new Geometria[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			geometriaTopTape[i].vertice = orig.geometriaTopTape[i].vertice;
 			geometriaTopTape[i].normal = orig.geometriaTopTape[i].normal;
 			geometriaTopTape[i].tangente = orig.geometriaTopTape[i].tangente;
@@ -109,16 +110,16 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else coordtext = nullptr;
 
 	if (orig.coordtextBottomTape != nullptr) {
-		coordtextBottomTape = new CoordTexturas[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		coordtextBottomTape = new CoordTexturas[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			coordtextBottomTape[i] = orig.coordtextBottomTape[i];
 		}
 	}
 	else coordtextBottomTape = nullptr;
 
 	if (orig.coordtextTopTape != nullptr) {
-		coordtextTopTape = new CoordTexturas[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		coordtextTopTape = new CoordTexturas[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			coordtextTopTape[i] = orig.coordtextTopTape[i];
 		}
 	}
@@ -133,16 +134,16 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else indices = nullptr;
 
 	if (orig.indicesBottomTape != nullptr) {
-		indicesBottomTape = new int[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		indicesBottomTape = new int[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			indicesBottomTape[i] = orig.indicesBottomTape[i];
 		}
 	}
 	else indicesBottomTape = nullptr;
 
 	if (orig.indicesTopTape != nullptr) {
-		indicesTopTape = new int[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		indicesTopTape = new int[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			indicesTopTape[i] = orig.indicesTopTape[i];
 		}
 	}
@@ -181,16 +182,16 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else _indices = nullptr;
 
 	if (orig._indicesBottom != nullptr) {
-		_indicesBottom = new GLuint[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		_indicesBottom = new GLuint[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			_indicesBottom[i] = orig._indicesBottom[i];
 		}
 	}
 	else _indicesBottom = nullptr;
 
 	if (orig._indicesTop != nullptr) {
-		_indicesTop = new GLuint[slices + 2];
-		for (int i = 0; i < slices + 2; i++) {
+		_indicesTop = new GLuint[slices + 1];
+		for (int i = 0; i < slices + 1; i++) {
 			_indicesTop[i] = orig._indicesTop[i];
 		}
 	}
@@ -202,10 +203,10 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
  * Funcion encargada de crear la Geometria y Topologia del PagRevolutionObject
  */
 void PagRevolutionObject::createObject() {
-	if (nombreAlumno == "maceta")color = glm::vec3(0.6, 0.3, 0.0);
+	/*if (nombreAlumno == "maceta")color = glm::vec3(0.6, 0.3, 0.0);
 	else if (nombreAlumno == "tronco")color = glm::vec3(0.4, 0.2, 0.0);
 	else if (nombreAlumno == "arbol")color = glm::vec3(0.0, 0.6, 0.0);
-	else color = glm::vec3(1.0, 0.5, 0.0);
+	else color = glm::vec3(1.0, 0.5, 0.0);*/
 
 	int numPuntosPerfil = subdivisionProfiles.getNumPuntosPerfil();
 
@@ -215,23 +216,23 @@ void PagRevolutionObject::createObject() {
 	if (flagBottomTape) {
 		numTapas++;
 		cambioIndice++;
-		geometriaBottomTape = new Geometria[slices + 2];
-		coordtextBottomTape = new CoordTexturas[slices + 2];
-		indicesBottomTape = new int[slices + 2];
-		pointsColorBottom = new PagPositionColor[slices + 2];
-		_indicesBottom = new GLuint[slices + 2];
+		geometriaBottomTape = new Geometria[slices + 1];
+		coordtextBottomTape = new CoordTexturas[slices + 1];
+		indicesBottomTape = new int[slices + 1];
+		pointsColorBottom = new PagPositionColor[slices + 1];
+		_indicesBottom = new GLuint[slices + 1];
 	}
 	if (flagTopTape) {
 		numTapas++;
 		cambioIndiceTop++;
-		geometriaTopTape = new Geometria[slices + 2];
-		coordtextTopTape = new CoordTexturas[slices + 2];
-		indicesTopTape = new int[slices + 2];
-		pointsColorTop = new PagPositionColor[slices + 2];
-		_indicesTop = new GLuint[slices + 2];
+		geometriaTopTape = new Geometria[slices + 1];
+		coordtextTopTape = new CoordTexturas[slices + 1];
+		indicesTopTape = new int[slices + 1];
+		pointsColorTop = new PagPositionColor[slices + 1];
+		_indicesTop = new GLuint[slices + 1];
 	}
 
-	tamaGeometriaCoordText = (numPuntosPerfil - numTapas) * slices + 1;
+	tamaGeometriaCoordText = (numPuntosPerfil - numTapas) * slices;
 	tamaIndices = (((numPuntosPerfil - (numTapas)) * 2) + 1) * slices;
 	geometria = new Geometria[tamaGeometriaCoordText];
 	coordtext = new CoordTexturas[tamaGeometriaCoordText];
@@ -241,7 +242,7 @@ void PagRevolutionObject::createObject() {
 
 	PuntosPerfil *perfil = &subdivisionProfiles.getPerfil();
 
-	double angleRadIncrement = (2 * PI) / slices;
+	double angleRadIncrement = (2 * PI) / (slices - 1);
 
 	// VERTICES
 
@@ -251,17 +252,17 @@ void PagRevolutionObject::createObject() {
 			vert.x = 0;
 			vert.y = perfil[j].y;
 			vert.z = 0;
-			geometriaBottomTape[slices + 1].vertice = vert;
+			geometriaBottomTape[slices].vertice = vert;
 		}
 		else if (j == numPuntosPerfil - 1 && flagTopTape) {
 			PuntosVertices vert;
 			vert.x = 0;
 			vert.y = perfil[j].y;
 			vert.z = 0;
-			geometriaTopTape[slices + 1].vertice = vert;
+			geometriaTopTape[slices].vertice = vert;
 		}
 		else {
-			for (int i = 0; i < slices + 1; i++) {
+			for (int i = 0; i < slices; i++) {
 				double x = perfil[j].x * cos(angleRadIncrement * i);
 				double z = perfil[j].x * -sin(angleRadIncrement * i);
 
@@ -289,8 +290,8 @@ void PagRevolutionObject::createObject() {
 			normal.y = -1;
 			normal.z = 0;
 
-			geometriaBottomTape[slices + 1].normal = normal;
-			for (int i = 0; i < slices + 1; i++) {
+			geometriaBottomTape[slices].normal = normal;
+			for (int i = 0; i < slices; i++) {
 				geometriaBottomTape[i].normal = normal;
 			}
 		}
@@ -301,13 +302,13 @@ void PagRevolutionObject::createObject() {
 			normal.y = 1;
 			normal.z = 0;
 
-			geometriaTopTape[slices + 1].normal = normal;
-			for (int i = 0; i < slices + 1; i++) {
+			geometriaTopTape[slices].normal = normal;
+			for (int i = 0; i < slices; i++) {
 				geometriaTopTape[i].normal = normal;
 			}
 		}
 		else {
-			for (int i = 0; i < slices + 1; i++) {
+			for (int i = 0; i < slices; i++) {
 
 				PuntosVertices p1;
 				PuntosVertices p2;
@@ -373,8 +374,8 @@ void PagRevolutionObject::createObject() {
 			tangente.y = 0;
 			tangente.z = 0;
 
-			geometriaBottomTape[slices + 1].tangente = tangente;
-			for (int i = 0; i < slices + 1; i++) {
+			geometriaBottomTape[slices].tangente = tangente;
+			for (int i = 0; i < slices; i++) {
 				geometriaBottomTape[i].tangente = tangente;
 			}
 		}
@@ -385,13 +386,13 @@ void PagRevolutionObject::createObject() {
 			tangente.y = 0;
 			tangente.z = 0;
 
-			geometriaTopTape[slices + 1].tangente = tangente;
-			for (int i = 0; i < slices + 1; i++) {
+			geometriaTopTape[slices].tangente = tangente;
+			for (int i = 0; i < slices; i++) {
 				geometriaTopTape[i].tangente = tangente;
 			}
 		}
 		else {
-			for (int i = 0; i < slices + 1; i++) {
+			for (int i = 0; i < slices; i++) {
 				NormalesTangentes tangente;
 
 				tangente.x = -1 * sin(angleRadIncrement * i);
@@ -406,7 +407,7 @@ void PagRevolutionObject::createObject() {
 	// COORDENADAS TEXTURAS
 
 	if (flagBottomTape || flagTopTape) {
-		for (int i = 0; i < slices + 1; i++) {
+		for (int i = 0; i < slices; i++) {
 			double s = (cos(angleRadIncrement * float(i)) / 2.0) + 0.5;
 			double t = (sin(angleRadIncrement * float(i)) / 2.0) + 0.5;
 			if (flagBottomTape) {
@@ -419,19 +420,19 @@ void PagRevolutionObject::createObject() {
 			}
 		}
 		if (flagBottomTape) {
-			coordtextBottomTape[slices + 1].s = 0.5;
-			coordtextBottomTape[slices + 1].t = 0.5;
+			coordtextBottomTape[slices].s = 0.5;
+			coordtextBottomTape[slices].t = 0.5;
 		}
 		if (flagTopTape) {
-			coordtextTopTape[slices + 1].s = 0.5;
-			coordtextTopTape[slices + 1].t = 0.5;
+			coordtextTopTape[slices].s = 0.5;
+			coordtextTopTape[slices].t = 0.5;
 		}
 	}
 
 	double *modulo = new double[numPuntosPerfil - numTapas];
 
-	for (int j = 0; j < slices + 1; j++) {
-		double s = j * double(float(1) / float(slices));
+	for (int j = 0; j < slices; j++) {
+		double s = j * double(float(1) / float(slices - 1));
 
 		double sumatorio = 0;
 
@@ -684,13 +685,13 @@ void PagRevolutionObject::drawSolid(glm::mat4 _ViewProjectionMatrix) {
 	 * que se quiera utilizar
 	 */
 
-	shader.setUniform("mvpMatrix", _ViewProjectionMatrix);
+	shader.setUniform("mvpMatrix", _ViewProjectionMatrix * ModelMatrix);
 	shader.setUniform("mModelView", _ViewProjectionMatrix);
-	shader.setUniform("lightPosition", glm::vec3(-500.0, 50.0, -500.0));
+	shader.setUniform("lightPosition", glm::vec3(0.0, 50.0, 50.0));
 	//shader.setUniform("Ka", color);
 	//shader.setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Ia", glm::vec3(1.0, 1.0, 1.0));
+	shader.setUniform("Ia", glm::vec3(0.0, 0.0, 0.0));
 	shader.setUniform("Id", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Is", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Shininess", 128.0f);
