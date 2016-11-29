@@ -41,6 +41,7 @@ namespace Structs {
 	struct PagPositionColor {
 		glm::vec3 position;
 		glm::vec3 color;
+		glm::vec2 coordtext;
 	};
 
 }
