@@ -3,8 +3,6 @@
 
 #include <math.h>
 
-#include "SOIL.h"
-
 
 #define PI 3.14159265358979323846
 
@@ -650,28 +648,26 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 _ViewProjectionMatrix) {
 }
 
 void PagRevolutionObject::drawSolid(glm::mat4 _ViewProjectionMatrix) {
-	int imgWidth, imgHeight;
-	GLuint texture = 0;
-
-	unsigned char *img = SOIL_load_image("pic.png",
-		&imgWidth,
-		&imgHeight,
-		0,
-		SOIL_LOAD_RGBA);
-
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
 	if (!shaderCreado) {
 		shader.createShaderProgram("ADS");
+
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		img = SOIL_load_image("pic.png",
+			&imgWidth,
+			&imgHeight,
+			0,
+			SOIL_LOAD_RGBA);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight,
+			0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
 		shaderCreado = true;
 	}
 
@@ -687,14 +683,14 @@ void PagRevolutionObject::drawSolid(glm::mat4 _ViewProjectionMatrix) {
 
 	shader.setUniform("mvpMatrix", _ViewProjectionMatrix * ModelMatrix);
 	shader.setUniform("mModelView", _ViewProjectionMatrix);
-	shader.setUniform("lightPosition", glm::vec3(0.0, 50.0, 50.0));
+	shader.setUniform("lightPosition", glm::vec3(0.0, 50.0, 0.0));
 	//shader.setUniform("Ka", color);
 	//shader.setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Ia", glm::vec3(0.0, 0.0, 0.0));
 	shader.setUniform("Id", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Is", glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Shininess", 128.0f);
+	shader.setUniform("Shininess", 50.0f);
 
 	shader.setUniform("TexSamplerColor", 0);
 
