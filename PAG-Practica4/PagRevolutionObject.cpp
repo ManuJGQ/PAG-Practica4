@@ -683,7 +683,7 @@ void PagRevolutionObject::drawSolid(glm::mat4 _ViewProjectionMatrix) {
 
 	shader.setUniform("mvpMatrix", _ViewProjectionMatrix * ModelMatrix);
 	shader.setUniform("mModelView", _ViewProjectionMatrix);
-	shader.setUniform("lightPosition", glm::vec3(0.0, 50.0, 0.0));
+	shader.setUniform("lightPosition",_ViewProjectionMatrix  * glm::vec4(0.0, 50.0, 0.0, 0.0));
 	//shader.setUniform("Ka", color);
 	//shader.setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
