@@ -37,7 +37,8 @@ public:
 	void movOrbit();
 	void resetCamera();
 	static void sleep() { Sleep(100); }
-	glm::mat4 getViewProjectionMatrix() const { return ProjectionMatrix * ViewMatrix; }
+	glm::mat4 getViewMatrix() const { return ViewMatrix; }
+	glm::mat4 getProjectionMatrix() const { return ProjectionMatrix; }
 	void setRotates(bool _rotates) { rotates = _rotates; }
 	void setTruck(bool _truck) { truck = _truck; }
 	void setOrbit(bool _orbit) { orbit = _orbit; }

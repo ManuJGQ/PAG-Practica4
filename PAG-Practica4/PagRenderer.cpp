@@ -39,9 +39,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		camera.movOrbit();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 ViewProjectionMatrix = camera.getViewProjectionMatrix();
+		glm::mat4 ViewMatrix = camera.getViewMatrix();
+		glm::mat4 ProjectionMatrix = camera.getProjectionMatrix();
 
-		objects.drawSolid(ViewProjectionMatrix);
+		objects.drawSolid(ViewMatrix, ProjectionMatrix);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -151,9 +152,10 @@ int PagRenderer::renderer() {
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 ViewProjectionMatrix = camera.getViewProjectionMatrix();
+		glm::mat4 ViewMatrix = camera.getViewMatrix();
+		glm::mat4 ProjectionMatrix = camera.getProjectionMatrix();
 
-		objects.drawSolid(ViewProjectionMatrix);
+		objects.drawSolid(ViewMatrix, ProjectionMatrix);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

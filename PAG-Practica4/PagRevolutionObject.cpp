@@ -261,13 +261,18 @@ void PagRevolutionObject::createObject() {
 		}
 		else {
 			for (int i = 0; i < slices; i++) {
-				double x = perfil[j].x * cos(angleRadIncrement * i);
-				double z = perfil[j].x * -sin(angleRadIncrement * i);
-
 				PuntosVertices vert;
-				vert.x = x;
-				vert.y = perfil[j].y;
-				vert.z = z;
+				if(i == slices - 1) {
+					std::cout << i << std::endl;
+					vert = geometria[(j - cambioIndice) * slices ].vertice;
+				}else {
+					double x = perfil[j].x * cos(angleRadIncrement * i);
+					double z = perfil[j].x * -sin(angleRadIncrement * i);
+
+					vert.x = x;
+					vert.y = perfil[j].y;
+					vert.z = z;
+				}
 
 				geometria[(j - cambioIndice) * slices + i].vertice = vert;
 				if (j == 1 && flagBottomTape) geometriaBottomTape[i].vertice = vert;
@@ -307,57 +312,66 @@ void PagRevolutionObject::createObject() {
 		}
 		else {
 			for (int i = 0; i < slices; i++) {
-
-				PuntosVertices p1;
-				PuntosVertices p2;
-
-				if (j == 0 || (j == 1 && flagBottomTape)) p1 = { 0,0,0 };
-				else p1 = geometria[(j - cambioIndice) * slices + i - 1].vertice;
-
-				PuntosVertices pi = geometria[(j - cambioIndice) * slices + i].vertice;
-
-				if (j == numPuntosPerfil - 1 || (j == numPuntosPerfil - 2 && flagTopTape)) p2 = { 0,0,0 };
-				else p2 = geometria[(j - cambioIndice) * slices + i + 1].vertice;
-
-				PuntosVertices v1;
-				v1.x = pi.x - p1.x;
-				v1.y = pi.y - p1.y;
-				v1.z = pi.z - p1.z;
-
-				double modV1 = sqrt((v1.x * v1.x) + (v1.y * v1.y) + (v1.z * v1.z));
-				v1.x = v1.x / modV1;
-				v1.y = v1.y / modV1;
-				v1.z = v1.z / modV1;
-
-				double xTemp = v1.x;
-				v1.x = v1.y;
-				v1.y = xTemp * -1;
-
-				PuntosVertices vi;
-				vi.x = p2.x - pi.x;
-				vi.y = p2.y - pi.y;
-				vi.z = p2.z - pi.z;
-
-				double modVi = sqrt((vi.x * vi.x) + (vi.y * vi.y) + (vi.z * vi.z));
-				vi.x = vi.x / modVi;
-				vi.y = vi.y / modVi;
-				vi.z = vi.z / modVi;
-
-				xTemp = vi.x;
-				vi.x = vi.y;
-				vi.y = xTemp * -1;
-
-				if (j == 0 || (j == 1 && flagBottomTape)) v1 = vi;
-				if (j == numPuntosPerfil - 1 || (j == numPuntosPerfil - 2 && flagTopTape)) vi = v1;
-
 				NormalesTangentes normal;
+				if(i == slices - 1) {
+					normal = geometria[(j - cambioIndice) * slices].normal;
+				}else {
+					PuntosVertices p1;
+					PuntosVertices p2;
 
-				normal.x = (v1.x + vi.x) / 2;
-				normal.y = (v1.y + vi.y) / 2;
-				normal.z = (v1.z + vi.z) / 2;
+					if (j == 0 || (j == 1 && flagBottomTape)) p1 = { 0,0,0 };
+					else p1 = geometria[(j - cambioIndice) * slices + i - 1].vertice;
+
+					PuntosVertices pi = geometria[(j - cambioIndice) * slices + i].vertice;
+
+					if (j == numPuntosPerfil - 1 || (j == numPuntosPerfil - 2 && flagTopTape)) p2 = { 0,0,0 };
+					else p2 = geometria[(j - cambioIndice) * slices + i + 1].vertice;
+
+					PuntosVertices v1;
+					v1.x = pi.x - p1.x;
+					v1.y = pi.y - p1.y;
+					v1.z = pi.z - p1.z;
+
+					double modV1 = sqrt((v1.x * v1.x) + (v1.y * v1.y) + (v1.z * v1.z));
+					v1.x = v1.x / modV1;
+					v1.y = v1.y / modV1;
+					v1.z = v1.z / modV1;
+
+					double xTemp = v1.x;
+					v1.x = v1.y;
+					v1.y = xTemp * -1;
+
+					PuntosVertices vi;
+					vi.x = p2.x - pi.x;
+					vi.y = p2.y - pi.y;
+					vi.z = p2.z - pi.z;
+
+					double modVi = sqrt((vi.x * vi.x) + (vi.y * vi.y) + (vi.z * vi.z));
+					vi.x = vi.x / modVi;
+					vi.y = vi.y / modVi;
+					vi.z = vi.z / modVi;
+
+					xTemp = vi.x;
+					vi.x = vi.y;
+					vi.y = xTemp * -1;
+
+					if (j == 0 || (j == 1 && flagBottomTape)) v1 = vi;
+					if (j == numPuntosPerfil - 1 || (j == numPuntosPerfil - 2 && flagTopTape)) vi = v1;
+
+					normal.x = (v1.x + vi.x) / 2;
+					normal.y = (v1.y + vi.y) / 2;
+					normal.z = (v1.z + vi.z) / 2;
+				}
 
 				geometria[(j - cambioIndice) * slices + i].normal = normal;
+
+				/*if (i == 0 || i == slices - 1) {
+					std::cout << "p1: " << p1.x << " " << p1.y << " " << p1.z << std::endl;
+					std::cout << "p2: " << p2.x << " " << p2.y << " " << p2.z << std::endl;
+					std::cout << normal.x << " " << normal.y << " " << normal.z << std::endl;
+				}*/
 			}
+
 		}
 
 	}
@@ -488,7 +502,7 @@ void PagRevolutionObject::createObject() {
 		indices[k] = 0xFFFF;
 		k++;
 	}
-	std::cout << k - 1 << " - " << tamaIndices << std::endl;
+	std::cout << slices << std::endl;
 
 	PagAssistantClass f;
 	f.devolverDatos(*this);
@@ -530,7 +544,7 @@ void PagRevolutionObject::createObject() {
 /**
  * Funcion encargada de pintar el PagRevolutionObject en nunbe de puntos
  */
-void PagRevolutionObject::drawPointsCloud(glm::mat4 _ViewProjectionMatrix) {
+void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
 	if (!shaderCreado) {
 		shader.createShaderProgram("pointsMultiColor");
 		shaderCreado = true;
@@ -538,7 +552,7 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 _ViewProjectionMatrix) {
 
 	shader.use();
 	shader.setUniform("pointSize", 4.0f);
-	shader.setUniform("mvpMatrix", _ViewProjectionMatrix);
+	shader.setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix);
 
 	GLuint vao;
 	GLuint vbo;
@@ -647,7 +661,7 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 _ViewProjectionMatrix) {
 
 }
 
-void PagRevolutionObject::drawSolid(glm::mat4 _ViewProjectionMatrix) {
+void PagRevolutionObject::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
 	if (!shaderCreado) {
 		shader.createShaderProgram("ADS");
 
@@ -660,8 +674,8 @@ void PagRevolutionObject::drawSolid(glm::mat4 _ViewProjectionMatrix) {
 			0,
 			SOIL_LOAD_RGBA);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight,
@@ -681,9 +695,9 @@ void PagRevolutionObject::drawSolid(glm::mat4 _ViewProjectionMatrix) {
 	 * que se quiera utilizar
 	 */
 
-	shader.setUniform("mvpMatrix", _ViewProjectionMatrix * ModelMatrix);
-	shader.setUniform("mModelView", _ViewProjectionMatrix);
-	shader.setUniform("lightPosition",_ViewProjectionMatrix  * glm::vec4(0.0, 50.0, 0.0, 0.0));
+	shader.setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+	shader.setUniform("mModelView", ViewMatrix * ModelMatrix);
+	shader.setUniform("lightPosition",glm::vec3(ViewMatrix * glm::vec4(-100.0, 100.0, 0.0, 1.0)));
 	//shader.setUniform("Ka", color);
 	//shader.setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
