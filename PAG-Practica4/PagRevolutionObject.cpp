@@ -294,9 +294,9 @@ void PagRevolutionObject::createObject() {
 			normal.z = 0;
 
 			geometriaBottomTape[slices].normal = normal;
-			for (int i = 0; i < slices; i++) {
+			/*for (int i = 0; i < slices; i++) {
 				geometriaBottomTape[i].normal = normal;
-			}
+			}*/
 		}
 		else if (j == numPuntosPerfil - 1 && flagTopTape) {
 			NormalesTangentes normal;
@@ -306,26 +306,24 @@ void PagRevolutionObject::createObject() {
 			normal.z = 0;
 
 			geometriaTopTape[slices].normal = normal;
-			for (int i = 0; i < slices; i++) {
+			/*for (int i = 0; i < slices; i++) {
 				geometriaTopTape[i].normal = normal;
-			}
+			}*/
 		}
 		else {
 			for (int i = 0; i < slices; i++) {
-				NormalesTangentes normal;
-				if(i == slices - 1) {
-					normal = geometria[(j - cambioIndice) * slices].normal;
-				}else {
 					PuntosVertices p1;
 					PuntosVertices p2;
 
-					if (j == 0 || (j == 1 && flagBottomTape)) p1 = { 0,0,0 };
-					else p1 = geometria[(j - cambioIndice) * slices + i - 1].vertice;
+					if (j == 0) p1 = { 0,0,0 };
+					else if(j == 1 && flagBottomTape) p1 = geometriaBottomTape[slices].vertice;
+					else p1 = geometria[(j - cambioIndice - 1) * slices + i].vertice;
 
 					PuntosVertices pi = geometria[(j - cambioIndice) * slices + i].vertice;
 
-					if (j == numPuntosPerfil - 1 || (j == numPuntosPerfil - 2 && flagTopTape)) p2 = { 0,0,0 };
-					else p2 = geometria[(j - cambioIndice) * slices + i + 1].vertice;
+					if (j == numPuntosPerfil - 1)  p2 = { 0,0,0 };
+					else if(j == numPuntosPerfil - 2 && flagTopTape) p2 = geometriaTopTape[slices].vertice;
+					else p2 = geometria[(j - cambioIndice + 1) * slices + i].vertice;
 
 					PuntosVertices v1;
 					v1.x = pi.x - p1.x;
@@ -355,15 +353,25 @@ void PagRevolutionObject::createObject() {
 					vi.x = vi.y;
 					vi.y = xTemp * -1;
 
-					if (j == 0 || (j == 1 && flagBottomTape)) v1 = vi;
-					if (j == numPuntosPerfil - 1 || (j == numPuntosPerfil - 2 && flagTopTape)) vi = v1;
+					if (j == 0) v1 = vi;
+					if (j == numPuntosPerfil - 1) vi = v1;
+
+					NormalesTangentes normal;
 
 					normal.x = (v1.x + vi.x) / 2;
 					normal.y = (v1.y + vi.y) / 2;
 					normal.z = (v1.z + vi.z) / 2;
-				}
 
 				geometria[(j - cambioIndice) * slices + i].normal = normal;
+				//if (i == 0)geometria[(j - cambioIndice) * slices + slices - 1].normal = normal;
+				if (j == numPuntosPerfil - 2 && flagTopTape) {
+					geometriaTopTape[i].normal = normal;
+					//if (i == 0)geometriaTopTape[slices - 1].normal = normal;
+				}
+				if (j == 1 && flagBottomTape) {
+					geometriaBottomTape[i].normal = normal;
+					//if (i == 0)geometriaBottomTape[slices - 1].normal = normal;
+				}
 
 				/*if (i == 0 || i == slices - 1) {
 					std::cout << "p1: " << p1.x << " " << p1.y << " " << p1.z << std::endl;
@@ -387,9 +395,9 @@ void PagRevolutionObject::createObject() {
 			tangente.z = 0;
 
 			geometriaBottomTape[slices].tangente = tangente;
-			for (int i = 0; i < slices; i++) {
+			/*for (int i = 0; i < slices; i++) {
 				geometriaBottomTape[i].tangente = tangente;
-			}
+			}*/
 		}
 		else if (j == numPuntosPerfil - 1 && flagTopTape) {
 			NormalesTangentes tangente;
@@ -399,9 +407,9 @@ void PagRevolutionObject::createObject() {
 			tangente.z = 0;
 
 			geometriaTopTape[slices].tangente = tangente;
-			for (int i = 0; i < slices; i++) {
+			/*for (int i = 0; i < slices; i++) {
 				geometriaTopTape[i].tangente = tangente;
-			}
+			}*/
 		}
 		else {
 			for (int i = 0; i < slices; i++) {
@@ -412,6 +420,8 @@ void PagRevolutionObject::createObject() {
 				tangente.z = -1 * cos(angleRadIncrement * i);
 
 				geometria[(j - cambioIndice) * slices + i].tangente = tangente;
+				if(j == 1 && flagBottomTape) geometriaBottomTape[i].tangente = tangente;
+				if(j == numPuntosPerfil - 2 && flagTopTape) geometriaTopTape[i].tangente = tangente;
 			}
 		}
 	}
@@ -488,15 +498,15 @@ void PagRevolutionObject::createObject() {
 	}
 	if (flagTopTape) {
 		for (int i = 0; i < slices; i++) {
-			indicesTopTape[i + 1] = i;
+			indicesTopTape[i] =  i;
 		}
-		indicesTopTape[0] = slices;
+		indicesTopTape[slices] = slices;
 	}
 	int k = 0;
 	for (int i = 0; i < slices; i++) {
 		for (int j = 0; j < numPuntosPerfil - numTapas; j++) {
 			indices[k] = i + (j * slices);
-			indices[k + 1] = ((i + 1) % slices) + (j * slices);
+			indices[k + 1] = ((i + 1)%slices) + (j * slices);
 			k += 2;
 		}
 		indices[k] = 0xFFFF;
@@ -521,7 +531,7 @@ void PagRevolutionObject::createObject() {
 	if (flagBottomTape) {
 		for (int i = 0; i < slices + 1; i++) {
 			pointsColorBottom[i] = { glm::vec3((GLfloat)geometriaBottomTape[i].vertice.x, (GLfloat)geometriaBottomTape[i].vertice.y,
-				(GLfloat)geometriaBottomTape[i].vertice.z), glm::vec3((GLfloat)geometria[i].normal.x, (GLfloat)geometria[i].normal.y, (GLfloat)geometria[i].normal.z) };
+				(GLfloat)geometriaBottomTape[i].vertice.z), glm::vec3((GLfloat)geometriaBottomTape[i].normal.x, (GLfloat)geometriaBottomTape[i].normal.y, (GLfloat)geometriaBottomTape[i].normal.z) };
 		}
 
 		for (int i = 0; i < slices + 1; i++) {
@@ -532,7 +542,7 @@ void PagRevolutionObject::createObject() {
 	if (flagTopTape) {
 		for (int i = 0; i < slices + 1; i++) {
 			pointsColorTop[i] = { glm::vec3((GLfloat)geometriaTopTape[i].vertice.x, (GLfloat)geometriaTopTape[i].vertice.y,
-				(GLfloat)geometriaTopTape[i].vertice.z), glm::vec3((GLfloat)geometria[i].normal.x, (GLfloat)geometria[i].normal.y, (GLfloat)geometria[i].normal.z) };
+				(GLfloat)geometriaTopTape[i].vertice.z), glm::vec3((GLfloat)geometriaTopTape[i].normal.x, (GLfloat)geometriaTopTape[i].normal.y, (GLfloat)geometriaTopTape[i].normal.z) };
 		}
 
 		for (int i = 0; i < slices + 1; i++) {
@@ -697,7 +707,7 @@ void PagRevolutionObject::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMa
 
 	shader.setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 	shader.setUniform("mModelView", ViewMatrix * ModelMatrix);
-	shader.setUniform("lightPosition",glm::vec3(ViewMatrix * glm::vec4(-100.0, 100.0, 0.0, 1.0)));
+	shader.setUniform("lightPosition",glm::vec3(ViewMatrix * glm::vec4(50.0, 50.0, 50.0, 1.0)));
 	//shader.setUniform("Ka", color);
 	//shader.setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
