@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+#include "SOIL.h"
+
 
 #define PI 3.14159265358979323846
 
@@ -671,27 +673,9 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 Projec
 
 }
 
-void PagRevolutionObject::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
+void PagRevolutionObject::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint texture) {
 	if (!shaderCreado) {
 		shader.createShaderProgram("ADS");
-
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		img = SOIL_load_image("pic.png",
-			&imgWidth,
-			&imgHeight,
-			0,
-			SOIL_LOAD_RGBA);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight,
-			0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
 		shaderCreado = true;
 	}
 

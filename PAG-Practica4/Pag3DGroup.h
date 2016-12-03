@@ -3,13 +3,17 @@
 #include "Structs.h"
 #include "Pag3DElement.h"
 
+#include <GL/glew.h> //glew SIEMPRE va antes del glfw
+#include <GLFW/glfw3.h>
+#include "gtc\matrix_transform.hpp"
+
 class Pag3DGroup : public Pag3DElement {
 	Pag3DElement** elements;
 	int numObjects;
 	glm::mat4 ModelMatrix;
 public:
 	void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
-	void drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
+	void drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint texture) override;
 	void createObject() override;
 	Pag3DGroup();
 	Pag3DGroup(Structs::Fichero ficheros[], int _numObjects);

@@ -6,9 +6,11 @@
 #include "Structs.h"
 
 #include <vector>
+#include "PagTexture.h"
 
 class PagRenderer{
 	std::vector<PagShaderProgram> shaders;
+	std::vector<PagTexture> textures;
 public:
 	PagRenderer();
 	int renderer();

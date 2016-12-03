@@ -37,12 +37,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_O && action == GLFW_REPEAT) {
 		camera.setOrbit(true);
 		camera.movOrbit();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		/*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 ViewMatrix = camera.getViewMatrix();
 		glm::mat4 ProjectionMatrix = camera.getProjectionMatrix();
 
-		objects.drawSolid(ViewMatrix, ProjectionMatrix);
+		objects.drawSolid(ViewMatrix, ProjectionMatrix);*/
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -144,6 +144,8 @@ int PagRenderer::renderer() {
 	//Creamos las Geometrias y Topologias de los diferentes objetos
 	objects.createObject();
 
+	//Cargamos Texturas
+	textures.push_back(PagTexture("pic.png", (GLuint)textures.size()));
 
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -155,7 +157,7 @@ int PagRenderer::renderer() {
 		glm::mat4 ViewMatrix = camera.getViewMatrix();
 		glm::mat4 ProjectionMatrix = camera.getProjectionMatrix();
 
-		objects.drawSolid(ViewMatrix, ProjectionMatrix);
+		objects.drawSolid(ViewMatrix, ProjectionMatrix, textures[textures.size() - 1].getTexture());
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

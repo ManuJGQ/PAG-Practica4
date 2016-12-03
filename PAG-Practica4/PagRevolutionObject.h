@@ -7,8 +7,6 @@
 #include "PagSubdivisionProfile.h"
 #include "Pag3DObject.h"
 
-#include "SOIL.h"
-
 class PagRevolutionObject: public Pag3DObject{
 	PagShaderProgram shader;
 	glm::mat4 ModelMatrix;
@@ -47,10 +45,6 @@ class PagRevolutionObject: public Pag3DObject{
 
 	//String con el nombre de los txt
 	std::string nombreAlumno;
-
-	int imgWidth, imgHeight;
-	unsigned char *img;
-	GLuint texture;
 public:
 	PagSubdivisionProfile subdivisionProfiles;
 	PagRevolutionObject();
@@ -61,7 +55,7 @@ public:
 	void operator = (const PagRevolutionObject &orig);
 	void createObject() override;
 	void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
-	void drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
+	void drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint texture) override;
 
 
 	//Metodos Gets

@@ -149,6 +149,7 @@
     <ClInclude Include="PagRevolutionObject.h" />
     <ClInclude Include="PagShaderProgram.h" />
     <ClInclude Include="PagSubdivisionProfile.h" />
+    <ClInclude Include="PagTexture.h" />
     <ClInclude Include="Structs.h" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
     <ClCompile Include="PagRevolutionObject.cpp" />
     <ClCompile Include="PagShaderProgram.cpp" />
     <ClCompile Include="PagSubdivisionProfile.cpp" />
+    <ClCompile Include="PagTexture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
