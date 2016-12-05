@@ -7,51 +7,7 @@
 #include <GLFW/glfw3.h>
 #include "gtc\matrix_transform.hpp"
 
-PagCamera camera;
-Pag3DGroup objects;
-
 PagRenderer::PagRenderer() {}
-
-static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
-	camera.mover(xpos, ypos);
-}
-
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		camera.setRotates(true);
-		camera.setTruck(false);
-	}
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) camera.setRotates(false);
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		camera.setTruck(true);
-		camera.setRotates(false);
-	}
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) camera.setTruck(false);
-}
-
-void scroll(GLFWwindow* window, double x, double y) {
-	camera.zoom(y * -1);
-}
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (key == GLFW_KEY_O && action == GLFW_REPEAT) {
-		camera.setOrbit(true);
-		camera.movOrbit();
-		/*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glm::mat4 ViewMatrix = camera.getViewMatrix();
-		glm::mat4 ProjectionMatrix = camera.getProjectionMatrix();
-
-		objects.drawSolid(ViewMatrix, ProjectionMatrix);*/
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-	if (key == GLFW_KEY_O && action == GLFW_RELEASE) {
-		camera.setOrbit(false);
-		camera.resetCamera();
-	}
-}
 
 int PagRenderer::renderer() {
 	// Leemos los datos y txt del usuario
@@ -102,7 +58,6 @@ int PagRenderer::renderer() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
 
-	GLFWwindow* window;
 	window = glfwCreateWindow(1024, 768, "PAG Practica 4 - TEXTURAS", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to open GLFW window" << std::endl;
@@ -128,12 +83,6 @@ int PagRenderer::renderer() {
 	double x, y;
 	glfwGetCursorPos(window, &x, &y);
 	camera = PagCamera(x, y);
-
-	//Callbacks Camara
-	glfwSetCursorPosCallback(window, cursor_position_callback);
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
-	glfwSetScrollCallback(window, scroll);
-	glfwSetKeyCallback(window, key_callback);
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
@@ -165,6 +114,18 @@ int PagRenderer::renderer() {
 
 	delete[] ficheros;
 	return 0;
+}
+
+void PagRenderer::reDrawScene() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glm::mat4 ViewMatrix = camera.getViewMatrix();
+	glm::mat4 ProjectionMatrix = camera.getProjectionMatrix();
+
+	objects.drawSolid(ViewMatrix, ProjectionMatrix, textures[textures.size() - 1].getTexture());
+
+	glfwSwapBuffers(window);
+	glfwPollEvents();
 }
 
 
