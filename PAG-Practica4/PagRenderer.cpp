@@ -3,9 +3,18 @@
 #include <iostream>
 #include <string>
 
+#include <algorithm>
+#include "dirent.h"
+
 #include <GL/glew.h> //glew SIEMPRE va antes del glfw
 #include <GLFW/glfw3.h>
 #include "gtc\matrix_transform.hpp"
+
+bool has_suffix(const std::string &str, const std::string &suffix)
+{
+	return str.size() >= suffix.size() &&
+		str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
 
 PagRenderer::PagRenderer() {
 	
@@ -46,15 +55,30 @@ PagRenderer::PagRenderer() {
 }
 
 void PagRenderer::cargarEscena() {
-	//Creamos las Geometrias y Topologias de los diferentes objetos
+	//Creamos las Geometrias y Topologias de los diferentes objetos que componen la escena
 	objects.createObject();
 
-	//Cargamos Texturas
-	textures.push_back(PagTexture("Textures/pic.png", (GLuint)textures.size()));
+	//Cargamos todas las Texturas del directorio Textures
+	DIR *dir = opendir("Textures/");
+
+	dirent *entry;
+	while ((entry = readdir(dir)) != nullptr){
+		if (has_suffix(entry->d_name, ".png")){
+			std::cout << entry->d_name << std::endl;
+			std::string name = std::string(entry->d_name);
+			int ind = name.find_last_of(".");
+			std::string nombreSinExt = name.substr(0, ind);
+			std::string path = "Textures/" + name;
+			textures.insert(nombreSinExt, PagTexture(path, GLuint(textures.size())));
+		}
+	}
+	closedir(dir);
+
+	//textures.push_back(PagTexture("Textures/pic.png", (GLuint)textures.size()));
 }
 
 void PagRenderer::pintarEscena(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
-	objects.drawSolid(ViewMatrix, ProjectionMatrix, textures[textures.size() - 1].getTexture());
+	//objects.drawSolid(ViewMatrix, ProjectionMatrix, textures[textures.size() - 1].getTexture());
 }
 
 PagRenderer::~PagRenderer(){

@@ -4,14 +4,14 @@
 #include "Pag3DGroup.h"
 #include "Structs.h"
 
-#include <vector>
+#include <map>
 #include "PagTexture.h"
 
 class PagRenderer{
 	Pag3DGroup objects;
 	
-	std::vector<PagShaderProgram> shaders;
-	std::vector<PagTexture> textures;
+	std::map<std::string, PagShaderProgram> shaders;
+	std::map<std::string, PagTexture> textures;
 	Structs::Fichero *ficheros;
 
 public:
