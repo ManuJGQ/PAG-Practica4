@@ -50,7 +50,7 @@ void PagRenderer::cargarEscena() {
 	objects.createObject();
 
 	//Cargamos Texturas
-	textures.push_back(PagTexture("pic.png", (GLuint)textures.size()));
+	textures.push_back(PagTexture("Textures/pic.png", (GLuint)textures.size()));
 }
 
 void PagRenderer::pintarEscena(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
