@@ -138,6 +138,8 @@
     <None Include="pointsMultiColor.vert" />
     <None Include="Test.frag" />
     <None Include="Test.vert" />
+    <None Include="Texture.frag" />
+    <None Include="Texture.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pag3DElement.h" />

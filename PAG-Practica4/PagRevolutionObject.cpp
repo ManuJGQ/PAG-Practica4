@@ -695,9 +695,9 @@ void PagRevolutionObject::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMa
 	//shader.setUniform("Ka", color);
 	//shader.setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Ia", glm::vec3(0.0, 0.0, 0.0));
-	shader.setUniform("Id", glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Is", glm::vec3(1.0, 1.0, 1.0));
+	shader.setUniform("Ia", 0.2f * glm::vec3(1.0, 1.0, 1.0));
+	shader.setUniform("Id", 0.5f * glm::vec3(1.0, 1.0, 1.0));
+	shader.setUniform("Is", 0.3f * glm::vec3(1.0, 1.0, 1.0));
 	shader.setUniform("Shininess", 50.0f);
 
 	shader.setUniform("TexSamplerColor", 0);
