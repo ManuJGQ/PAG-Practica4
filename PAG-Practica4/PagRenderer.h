@@ -16,7 +16,7 @@ class PagRenderer{
 
 public:
 	PagRenderer();
-	void cargar();
+	void cargarEscena();
 	void pintarEscena(glm::mat4 ViewMatrix , glm::mat4 ProjectionMatrix);
 	~PagRenderer();
 };

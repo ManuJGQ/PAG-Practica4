@@ -675,7 +675,7 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 Projec
 
 void PagRevolutionObject::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint texture) {
 	if (!shaderCreado) {
-		shader.createShaderProgram("ADS");
+		shader.createShaderProgram("Texture");
 		shaderCreado = true;
 	}
 

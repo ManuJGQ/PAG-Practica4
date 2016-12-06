@@ -45,7 +45,7 @@ PagRenderer::PagRenderer() {
 	objects = Pag3DGroup(ficheros, perfiles);
 }
 
-void PagRenderer::cargar() {
+void PagRenderer::cargarEscena() {
 	//Creamos las Geometrias y Topologias de los diferentes objetos
 	objects.createObject();
 

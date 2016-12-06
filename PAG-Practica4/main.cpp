@@ -1,4 +1,5 @@
 #include "PagRenderer.h"
+#include "PagCamera.h"
 
 PagRenderer escena;
 PagCamera camera;
@@ -101,7 +102,7 @@ int main(int argc, char** argv) {
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glViewport(0, 0, 1024, 768);
 
-	escena.cargar();
+	escena.cargarEscena();
 
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
