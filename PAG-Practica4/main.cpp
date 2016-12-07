@@ -1,6 +1,10 @@
 #include "PagRenderer.h"
 #include "PagCamera.h"
 
+#include <GL/glew.h> //glew SIEMPRE va antes del glfw
+#include <GLFW/glfw3.h>
+#include "gtc\matrix_transform.hpp"
+
 PagRenderer escena;
 PagCamera camera;
 
@@ -71,6 +75,8 @@ int main(int argc, char** argv) {
 		return -2;
 	}
 
+	glfwHideWindow(window);
+
 	glfwMakeContextCurrent(window);
 
 	glewExperimental = true;
@@ -98,13 +104,14 @@ int main(int argc, char** argv) {
 	glfwSetScrollCallback(window, scroll);
 	glfwSetKeyCallback(window, key_callback);
 
+	
+	escena.cargarEscena();
+	glfwShowWindow(window);
+
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glViewport(0, 0, 1024, 768);
 
-	escena.cargarEscena();
-
-	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	//Dibujamos los objetos

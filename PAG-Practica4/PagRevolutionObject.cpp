@@ -3,8 +3,6 @@
 
 #include <math.h>
 
-#include "SOIL.h"
-
 
 #define PI 3.14159265358979323846
 
@@ -265,7 +263,7 @@ void PagRevolutionObject::createObject() {
 			for (int i = 0; i < slices; i++) {
 				PuntosVertices vert;
 				if(i == slices - 1) {
-					std::cout << i << std::endl;
+					/*std::cout << i << std::endl;*/
 					vert = geometria[(j - cambioIndice) * slices ].vertice;
 				}else {
 					double x = perfil[j].x * cos(angleRadIncrement * i);
@@ -514,7 +512,7 @@ void PagRevolutionObject::createObject() {
 		indices[k] = 0xFFFF;
 		k++;
 	}
-	std::cout << slices << std::endl;
+	//std::cout << slices << std::endl;
 
 	PagAssistantClass f;
 	f.devolverDatos(*this);

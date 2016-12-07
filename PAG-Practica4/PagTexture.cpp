@@ -8,9 +8,9 @@ PagTexture::PagTexture(): img(nullptr), imgWidth(0), imgHeight(0) {
 PagTexture::PagTexture(std::string imgPath, GLuint _texture){
 	texture = _texture;
 
-	std::cout << imgPath.c_str() << std::endl;
+	/*std::cout << imgPath.c_str() << std::endl;*/
 
-	glGenTextures(1, &texture);
+	glGenTextures(_texture + 1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	img = SOIL_load_image(imgPath.c_str(),

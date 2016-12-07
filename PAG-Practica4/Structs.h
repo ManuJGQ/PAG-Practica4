@@ -36,6 +36,7 @@ namespace Structs {
 		std::string archivoIN;
 		int numSlices;
 		std::string nombreAlumno;
+		std::string nTextura;
 	};
 
 	struct PagPositionColor {
