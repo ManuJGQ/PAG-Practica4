@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+#include "PagRenderer.h"
+
 
 #define PI 3.14159265358979323846
 
@@ -593,22 +595,22 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 Projec
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//POSITIONS
+		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
 		((GLubyte *)nullptr + (0)));
 
 	//MULTICOLOR
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 		((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 		((GLubyte *)nullptr + (sizeof(glm::vec3)) + (sizeof(glm::vec3))));
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(PagPositionColor) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -627,17 +629,17 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 Projec
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//POSITIONS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
 			((GLubyte *)nullptr + (0)));
 
 		//MULTICOLOR
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 			((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagPositionColor) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
 
 		glGenBuffers(1, &iboBottomTape);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
@@ -657,17 +659,17 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 Projec
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//POSITIONS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
 			((GLubyte *)nullptr + (0)));
 
 		//MULTICOLOR
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 			((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagPositionColor) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
 
 		glGenBuffers(1, &iboTopTape);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
@@ -682,6 +684,136 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 Projec
 }
 
 void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) {
+	std::string nShader = renderer->getNombreShader();
+
+	renderer->getShader()->use();
+
+	GLuint vao;
+	GLuint vbo;
+	GLuint ibo;
+
+	GLuint vaoBottomTape;
+	GLuint vboBottomTape;
+	GLuint iboBottomTape;
+
+	GLuint vaoTopTape;
+	GLuint vboTopTape;
+	GLuint iboTopTape;
+
+	if(nShader == "points" || nShader == "pointsMultiColor") {
+		if(nShader == "points") {
+			
+		}
+		if(nShader == "pointsMultiColor") {
+			shader.setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix);
+			shader.setUniform("pointSize", 4.0f);
+			
+		}
+
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+			((GLubyte *)nullptr + (0)));
+
+		//MULTICOLOR
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
+			((GLubyte *)nullptr + (sizeof(glm::vec3))));
+
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
+			((GLubyte *)nullptr + (sizeof(glm::vec3)) + (sizeof(glm::vec3))));
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
+
+		glBindVertexArray(vao);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glDrawElements(GL_POINTS, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+
+		if (flagBottomTape) {
+			glGenVertexArrays(1, &vaoBottomTape);
+			glBindVertexArray(vaoBottomTape);
+			glGenBuffers(1, &vboBottomTape);
+			glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+				((GLubyte *)nullptr + (0)));
+
+			//MULTICOLOR
+
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
+				((GLubyte *)nullptr + (sizeof(glm::vec3))));
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+
+			glGenBuffers(1, &iboBottomTape);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
+
+			glBindVertexArray(vaoBottomTape);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+			glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+		}
+
+		if (flagTopTape) {
+			glGenVertexArrays(1, &vaoTopTape);
+			glBindVertexArray(vaoTopTape);
+			glGenBuffers(1, &vboTopTape);
+			glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+				((GLubyte *)nullptr + (0)));
+
+			//MULTICOLOR
+
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
+				((GLubyte *)nullptr + (sizeof(glm::vec3))));
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+
+			glGenBuffers(1, &iboTopTape);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
+
+			glBindVertexArray(vaoTopTape);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+			glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+		}
+
+	}else {
+		if(nShader == "ADS") {
+			
+		}
+		if(nShader == "Test") {
+			
+		}
+		if(nShader == "Texture") {
+			
+		}
+	}
 	if (!shaderCreado) {
 		shader.createShaderProgram("Texture");
 		shaderCreado = true;
@@ -729,22 +861,22 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//POSITIONS
+		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
 		((GLubyte *)nullptr + (0)));
 
 	//MULTICOLOR
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 		((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 		((GLubyte *)nullptr + (sizeof(glm::vec3)) + (sizeof(glm::vec3))));
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(PagPositionColor) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -768,17 +900,17 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//POSITIONS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
 			((GLubyte *)nullptr + (0)));
 
 		//MULTICOLOR
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 			((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagPositionColor) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
 
 		glGenBuffers(1, &iboBottomTape);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
@@ -798,17 +930,17 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//POSITIONS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
 			((GLubyte *)nullptr + (0)));
 
 		//MULTICOLOR
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagPositionColor),						//COLORS
+			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 			((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagPositionColor) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
 
 		glGenBuffers(1, &iboTopTape);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);

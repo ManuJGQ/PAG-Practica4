@@ -80,6 +80,8 @@ void PagRenderer::cargarEscena() {
 	closedir(dir);
 
 	//Cargamos todos los shaders
+	std::vector<std::string> nombreShaders;
+
 	DIR *dirS = opendir("Textures/..");
 
 	dirent *entryS;
@@ -104,6 +106,8 @@ void PagRenderer::cargarEscena() {
 
 				shaders.push_back(shader);
 
+				nombreShaders.push_back(name);
+
 				std::cout << "[" << shaders.size() - 1 << "] - " << name << std::endl;
 
 			}
@@ -112,12 +116,14 @@ void PagRenderer::cargarEscena() {
 	}
 	closedir(dirS);
 
-	std::cout << "Escoja el shader a usar: ";
+	std::cout << "Escoja el nº del shader a usar: ";
 	std::cin >> s;
+
+	nombreShader = nombreShaders[s];
 }
 
 void PagRenderer::pintarEscena(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
-	//objects.drawSolid(ViewMatrix, ProjectionMatrix, textures[textures.size() - 1].getTexture());
+	objects.draw(ViewMatrix, ProjectionMatrix, this);
 }
 
 PagRenderer::~PagRenderer(){
