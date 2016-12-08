@@ -33,9 +33,9 @@ class PagRevolutionObject: public Pag3DObject{
 	int tamaIndices;
 
 	//Arrays para los vbos y ibos
-	PagPositionColor *pointsColor;
-	PagPositionColor *pointsColorBottom;
-	PagPositionColor *pointsColorTop;
+	PagVaoData *pointsColor;
+	PagVaoData *pointsColorBottom;
+	PagVaoData *pointsColorTop;
 	GLuint *_indices;
 	GLuint *_indicesTop;
 	GLuint *_indicesBottom;
@@ -45,17 +45,20 @@ class PagRevolutionObject: public Pag3DObject{
 
 	//String con el nombre de los txt
 	std::string nombreAlumno;
+
+	//Nombre de la textura que usara
+	std::string nombreTextura;
 public:
 	PagSubdivisionProfile subdivisionProfiles;
 	PagRevolutionObject();
 	PagRevolutionObject(int _numPuntosPerfilOriginal, int _numDivisiones, PuntosPerfil *_perfilOriginal,
-		bool _flagBottomTape, bool _flagTopTape, int _slices, std::string _nombreAlumno);
+		bool _flagBottomTape, bool _flagTopTape, int _slices, std::string _nombreAlumno, std::string _nombreTextura);
 	PagRevolutionObject(Structs::Fichero _fichero);
 	PagRevolutionObject(const PagRevolutionObject &orig);
 	void operator = (const PagRevolutionObject &orig);
 	void createObject() override;
 	void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
-	void drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint texture) override;
+	void draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) override;
 
 
 	//Metodos Gets

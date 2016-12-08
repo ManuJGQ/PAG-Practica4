@@ -15,9 +15,9 @@ void Pag3DGroup::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatri
 * Funcion para pintar en modo solido todos los Pag3DElements que tenga
 * el Group
 */
-void Pag3DGroup::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint texture){
+void Pag3DGroup::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer){
 	for (int i = 0; i < numObjects; i++) {
-		elements[i]->drawSolid(ViewMatrix, ProjectionMatrix, texture);
+		elements[i]->draw(ViewMatrix, ProjectionMatrix, renderer);
 	}
 }
 

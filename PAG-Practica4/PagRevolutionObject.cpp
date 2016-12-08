@@ -20,11 +20,11 @@ _indicesBottom(nullptr), shaderCreado(false) {};
  * Constructor parametrizado de PagRevolutionObject
  */
 PagRevolutionObject::PagRevolutionObject(int _numPuntosPerfilOriginal, int _numDivisiones, PuntosPerfil *_perfilOriginal,
-	bool _flagBottomTape, bool _flagTopTape, int _slices, std::string _nombreAlumno) : flagBottomTape(false), flagTopTape(false),
+	bool _flagBottomTape, bool _flagTopTape, int _slices, std::string _nombreAlumno, std::string _nombreTextura) : flagBottomTape(false), flagTopTape(false),
 	geometria(nullptr), geometriaBottomTape(nullptr), geometriaTopTape(nullptr), coordtext(nullptr), coordtextBottomTape(nullptr),
 	coordtextTopTape(nullptr), indices(nullptr), indicesBottomTape(nullptr), indicesTopTape(nullptr),
 	tamaGeometriaCoordText(0), tamaIndices(0), pointsColor(nullptr), pointsColorBottom(nullptr), pointsColorTop(nullptr),
-	_indices(nullptr), _indicesTop(nullptr), _indicesBottom(nullptr), shaderCreado(false), nombreAlumno(_nombreAlumno) {
+	_indices(nullptr), _indicesTop(nullptr), _indicesBottom(nullptr), shaderCreado(false), nombreAlumno(_nombreAlumno), nombreTextura(_nombreTextura) {
 
 	flagBottomTape = _flagBottomTape;
 	flagTopTape = _flagTopTape;
@@ -148,7 +148,7 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else indicesTopTape = nullptr;
 
 	if (orig.pointsColor != nullptr) {
-		pointsColor = new PagPositionColor[tamaGeometriaCoordText];
+		pointsColor = new PagVaoData[tamaGeometriaCoordText];
 		for (int i = 0; i < tamaGeometriaCoordText; i++) {
 			pointsColor[i] = orig.pointsColor[i];
 		}
@@ -156,7 +156,7 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else pointsColor = nullptr;
 
 	if (orig.pointsColorBottom != nullptr) {
-		pointsColorBottom = new PagPositionColor[tamaGeometriaCoordText];
+		pointsColorBottom = new PagVaoData[tamaGeometriaCoordText];
 		for (int i = 0; i < tamaGeometriaCoordText; i++) {
 			pointsColorBottom[i] = orig.pointsColorBottom[i];
 		}
@@ -164,7 +164,7 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	else pointsColorBottom = nullptr;
 
 	if (orig.pointsColorTop != nullptr) {
-		pointsColorTop = new PagPositionColor[tamaGeometriaCoordText];
+		pointsColorTop = new PagVaoData[tamaGeometriaCoordText];
 		for (int i = 0; i < tamaGeometriaCoordText; i++) {
 			pointsColorTop[i] = orig.pointsColorTop[i];
 		}
@@ -217,7 +217,7 @@ void PagRevolutionObject::createObject() {
 		geometriaBottomTape = new Geometria[slices + 1];
 		coordtextBottomTape = new CoordTexturas[slices + 1];
 		indicesBottomTape = new int[slices + 1];
-		pointsColorBottom = new PagPositionColor[slices + 1];
+		pointsColorBottom = new PagVaoData[slices + 1];
 		_indicesBottom = new GLuint[slices + 1];
 	}
 	if (flagTopTape) {
@@ -226,7 +226,7 @@ void PagRevolutionObject::createObject() {
 		geometriaTopTape = new Geometria[slices + 1];
 		coordtextTopTape = new CoordTexturas[slices + 1];
 		indicesTopTape = new int[slices + 1];
-		pointsColorTop = new PagPositionColor[slices + 1];
+		pointsColorTop = new PagVaoData[slices + 1];
 		_indicesTop = new GLuint[slices + 1];
 	}
 
@@ -234,7 +234,7 @@ void PagRevolutionObject::createObject() {
 	tamaIndices = (((numPuntosPerfil - (numTapas)) * 2) + 1) * slices;
 	geometria = new Geometria[tamaGeometriaCoordText];
 	coordtext = new CoordTexturas[tamaGeometriaCoordText];
-	pointsColor = new PagPositionColor[tamaGeometriaCoordText];
+	pointsColor = new PagVaoData[tamaGeometriaCoordText];
 	indices = new int[tamaIndices];
 	_indices = new GLuint[tamaIndices];
 
@@ -520,8 +520,10 @@ void PagRevolutionObject::createObject() {
 	//Arrays para los vbos y ibos
 	for (int i = 0; i < tamaGeometriaCoordText; i++) {
 		pointsColor[i] = { glm::vec3((GLfloat)geometria[i].vertice.x, (GLfloat)geometria[i].vertice.y, (GLfloat)geometria[i].vertice.z),
+			glm::vec3(0.85, 0.65, 0.12),
 			glm::vec3((GLfloat)geometria[i].normal.x, (GLfloat)geometria[i].normal.y, (GLfloat)geometria[i].normal.z),
-			glm::vec2((GLfloat)coordtext[i].s, (GLfloat)coordtext[i].t) };
+			glm::vec2((GLfloat)coordtext[i].s, (GLfloat)coordtext[i].t),
+			glm::vec3((GLfloat)geometria[i].tangente.x, (GLfloat)geometria[i].tangente.y, (GLfloat)geometria[i].tangente.z) };
 	}
 
 	for (int i = 0; i < tamaIndices; i++) {
@@ -530,8 +532,12 @@ void PagRevolutionObject::createObject() {
 
 	if (flagBottomTape) {
 		for (int i = 0; i < slices + 1; i++) {
-			pointsColorBottom[i] = { glm::vec3((GLfloat)geometriaBottomTape[i].vertice.x, (GLfloat)geometriaBottomTape[i].vertice.y,
-				(GLfloat)geometriaBottomTape[i].vertice.z), glm::vec3((GLfloat)geometriaBottomTape[i].normal.x, (GLfloat)geometriaBottomTape[i].normal.y, (GLfloat)geometriaBottomTape[i].normal.z) };
+			pointsColorBottom[i] = { glm::vec3((GLfloat)geometriaBottomTape[i].vertice.x, (GLfloat)geometriaBottomTape[i].vertice.y, (GLfloat)geometriaBottomTape[i].vertice.z),
+				glm::vec3(0.85, 0.65, 0.12),
+				glm::vec3((GLfloat)geometriaBottomTape[i].normal.x, (GLfloat)geometriaBottomTape[i].normal.y, (GLfloat)geometriaBottomTape[i].normal.z),
+				glm::vec2((GLfloat)coordtextBottomTape[i].s, (GLfloat)coordtextBottomTape[i].t),
+				glm::vec3((GLfloat)geometriaBottomTape[i].tangente.x, (GLfloat)geometriaBottomTape[i].tangente.y, (GLfloat)geometriaBottomTape[i].tangente.z) 
+			};
 		}
 
 		for (int i = 0; i < slices + 1; i++) {
@@ -541,8 +547,12 @@ void PagRevolutionObject::createObject() {
 
 	if (flagTopTape) {
 		for (int i = 0; i < slices + 1; i++) {
-			pointsColorTop[i] = { glm::vec3((GLfloat)geometriaTopTape[i].vertice.x, (GLfloat)geometriaTopTape[i].vertice.y,
-				(GLfloat)geometriaTopTape[i].vertice.z), glm::vec3((GLfloat)geometriaTopTape[i].normal.x, (GLfloat)geometriaTopTape[i].normal.y, (GLfloat)geometriaTopTape[i].normal.z) };
+			pointsColorTop[i] = { glm::vec3((GLfloat)geometriaTopTape[i].vertice.x, (GLfloat)geometriaTopTape[i].vertice.y, (GLfloat)geometriaTopTape[i].vertice.z),
+				glm::vec3(0.85, 0.65, 0.12),
+				glm::vec3((GLfloat)geometriaTopTape[i].normal.x, (GLfloat)geometriaTopTape[i].normal.y, (GLfloat)geometriaTopTape[i].normal.z),
+				glm::vec2((GLfloat)coordtextTopTape[i].s, (GLfloat)coordtextTopTape[i].t),
+				glm::vec3((GLfloat)geometriaTopTape[i].tangente.x, (GLfloat)geometriaTopTape[i].tangente.y, (GLfloat)geometriaTopTape[i].tangente.z)
+			};
 		}
 
 		for (int i = 0; i < slices + 1; i++) {
@@ -671,7 +681,7 @@ void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 Projec
 
 }
 
-void PagRevolutionObject::drawSolid(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint texture) {
+void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) {
 	if (!shaderCreado) {
 		shader.createShaderProgram("Texture");
 		shaderCreado = true;
