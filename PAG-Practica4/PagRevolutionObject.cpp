@@ -69,6 +69,7 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	tamaIndices = orig.tamaIndices;
 	subdivisionProfiles = orig.subdivisionProfiles;
 	nombreAlumno = orig.nombreAlumno;
+	nombreTextura = orig.nombreTextura;
 
 	if (orig.geometria != nullptr) {
 		geometria = new Geometria[tamaGeometriaCoordText];

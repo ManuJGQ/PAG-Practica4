@@ -29,8 +29,7 @@ public:
 		std::map<std::string, PagTexture>::iterator it = textures.find(n);
 		if(it != textures.end()) {
 			return it->second.getTexture();
-		}
-		return textures.find("default")->second.getTexture();
+		}else return textures.find("default")->second.getTexture();
 	}
 	~PagRenderer();
 };
