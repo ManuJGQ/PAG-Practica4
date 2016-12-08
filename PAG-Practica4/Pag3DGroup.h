@@ -12,7 +12,7 @@ class Pag3DGroup : public Pag3DElement {
 	int numObjects;
 	glm::mat4 ModelMatrix;
 public:
-	void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
+	//void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
 	void draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) override;
 	void createObject() override;
 	Pag3DGroup();

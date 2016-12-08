@@ -5,11 +5,11 @@
  * Funcion para pintar en nube de puntos todos los Pag3DElements que tenga
  * el Group
  */
-void Pag3DGroup::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
-	for (int i = 0; i < numObjects; i++) {
-		elements[i]->drawPointsCloud(ViewMatrix, ProjectionMatrix);
-	}
-}
+//void Pag3DGroup::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
+//	for (int i = 0; i < numObjects; i++) {
+//		elements[i]->drawPointsCloud(ViewMatrix, ProjectionMatrix);
+//	}
+//}
 
 /**
 * Funcion para pintar en modo solido todos los Pag3DElements que tenga

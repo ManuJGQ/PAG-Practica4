@@ -16,7 +16,7 @@ geometria(nullptr), geometriaBottomTape(nullptr), geometriaTopTape(nullptr), coo
 coordtextBottomTape(nullptr), coordtextTopTape(nullptr), indices(nullptr), indicesBottomTape(nullptr),
 indicesTopTape(nullptr), slices(0), tamaGeometriaCoordText(0), tamaIndices(0),
 pointsColor(nullptr), pointsColorBottom(nullptr), pointsColorTop(nullptr), _indices(nullptr), _indicesTop(nullptr),
-_indicesBottom(nullptr), shaderCreado(false) {};
+_indicesBottom(nullptr) {};
 
 /**
  * Constructor parametrizado de PagRevolutionObject
@@ -26,7 +26,7 @@ PagRevolutionObject::PagRevolutionObject(int _numPuntosPerfilOriginal, int _numD
 	geometria(nullptr), geometriaBottomTape(nullptr), geometriaTopTape(nullptr), coordtext(nullptr), coordtextBottomTape(nullptr),
 	coordtextTopTape(nullptr), indices(nullptr), indicesBottomTape(nullptr), indicesTopTape(nullptr),
 	tamaGeometriaCoordText(0), tamaIndices(0), pointsColor(nullptr), pointsColorBottom(nullptr), pointsColorTop(nullptr),
-	_indices(nullptr), _indicesTop(nullptr), _indicesBottom(nullptr), shaderCreado(false), nombreAlumno(_nombreAlumno), nombreTextura(_nombreTextura) {
+	_indices(nullptr), _indicesTop(nullptr), _indicesBottom(nullptr), nombreAlumno(_nombreAlumno), nombreTextura(_nombreTextura) {
 
 	flagBottomTape = _flagBottomTape;
 	flagTopTape = _flagTopTape;
@@ -68,7 +68,6 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
 	tamaGeometriaCoordText = orig.tamaGeometriaCoordText;
 	tamaIndices = orig.tamaIndices;
 	subdivisionProfiles = orig.subdivisionProfiles;
-	shaderCreado = orig.shaderCreado;
 	nombreAlumno = orig.nombreAlumno;
 
 	if (orig.geometria != nullptr) {
@@ -564,129 +563,14 @@ void PagRevolutionObject::createObject() {
 }
 
 /**
- * Funcion encargada de pintar el PagRevolutionObject en nunbe de puntos
+ * Funcion encargada de pintar el PagRevolutionObject en todos los modos posibles
  */
-void PagRevolutionObject::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
-	if (!shaderCreado) {
-		shader.createShaderProgram("pointsMultiColor");
-		shaderCreado = true;
-	}
-
-	shader.use();
-	shader.setUniform("pointSize", 4.0f);
-	shader.setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix);
-
-	GLuint vao;
-	GLuint vbo;
-	GLuint ibo;
-
-	GLuint vaoBottomTape;
-	GLuint vboBottomTape;
-	GLuint iboBottomTape;
-
-	GLuint vaoTopTape;
-	GLuint vboTopTape;
-	GLuint iboTopTape;
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-		((GLubyte *)nullptr + (0)));
-
-	//MULTICOLOR
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-		((GLubyte *)nullptr + (sizeof(glm::vec3))));
-
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-		((GLubyte *)nullptr + (sizeof(glm::vec3)) + (sizeof(glm::vec3))));
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
-
-	glBindVertexArray(vao);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glDrawElements(GL_POINTS, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-
-	if (flagBottomTape) {
-		glGenVertexArrays(1, &vaoBottomTape);
-		glBindVertexArray(vaoBottomTape);
-		glGenBuffers(1, &vboBottomTape);
-		glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-			((GLubyte *)nullptr + (0)));
-
-		//MULTICOLOR
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-			((GLubyte *)nullptr + (sizeof(glm::vec3))));
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &iboBottomTape);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
-
-		glBindVertexArray(vaoBottomTape);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
-		glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-	}
-
-	if (flagTopTape) {
-		glGenVertexArrays(1, &vaoTopTape);
-		glBindVertexArray(vaoTopTape);
-		glGenBuffers(1, &vboTopTape);
-		glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-			((GLubyte *)nullptr + (0)));
-
-		//MULTICOLOR
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-			((GLubyte *)nullptr + (sizeof(glm::vec3))));
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &iboTopTape);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
-
-		glBindVertexArray(vaoTopTape);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
-		glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-	}
-
-}
-
 void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) {
 	std::string nShader = renderer->getNombreShader();
 
-	renderer->getShader()->use();
+	PagShaderProgram* shader = renderer->getShader();
+
+	shader->use();
 
 	GLuint vao;
 	GLuint vbo;
@@ -702,255 +586,437 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 
 	if(nShader == "points" || nShader == "pointsMultiColor") {
 		if(nShader == "points") {
-			
+			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+			shader->setUniform("vColor", glm::vec3(0.85, 0.65, 0.12));
+			shader->setUniform("pointSize", 4.0f);
+
+			glGenVertexArrays(1, &vao);
+			glBindVertexArray(vao);
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+				((GLubyte *)nullptr + (0)));
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+
+			glGenBuffers(1, &ibo);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
+
+			glBindVertexArray(vao);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glDrawElements(GL_POINTS, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+
+			if (flagBottomTape) {
+				glGenVertexArrays(1, &vaoBottomTape);
+				glBindVertexArray(vaoBottomTape);
+				glGenBuffers(1, &vboBottomTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboBottomTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoBottomTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
+
+			if (flagTopTape) {
+				glGenVertexArrays(1, &vaoTopTape);
+				glBindVertexArray(vaoTopTape);
+				glGenBuffers(1, &vboTopTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboTopTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoTopTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
 		}
 		if(nShader == "pointsMultiColor") {
-			shader.setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix);
-			shader.setUniform("pointSize", 4.0f);
+			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+			shader->setUniform("pointSize", 4.0f);
 			
-		}
-
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-			((GLubyte *)nullptr + (0)));
-
-		//MULTICOLOR
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-			((GLubyte *)nullptr + (sizeof(glm::vec3))));
-
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-			((GLubyte *)nullptr + (sizeof(glm::vec3)) + (sizeof(glm::vec3))));
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &ibo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
-
-		glBindVertexArray(vao);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glDrawElements(GL_POINTS, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-
-		if (flagBottomTape) {
-			glGenVertexArrays(1, &vaoBottomTape);
-			glBindVertexArray(vaoBottomTape);
-			glGenBuffers(1, &vboBottomTape);
-			glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
+			glGenVertexArrays(1, &vao);
+			glBindVertexArray(vao);
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
 				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
 				((GLubyte *)nullptr + (0)));
 
-			//MULTICOLOR
-
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
 				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
 				((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
-			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
 
-			glGenBuffers(1, &iboBottomTape);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
+			glGenBuffers(1, &ibo);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
 
-			glBindVertexArray(vaoBottomTape);
+			glBindVertexArray(vao);
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
-			glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-		}
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glDrawElements(GL_POINTS, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
 
-		if (flagTopTape) {
-			glGenVertexArrays(1, &vaoTopTape);
-			glBindVertexArray(vaoTopTape);
-			glGenBuffers(1, &vboTopTape);
-			glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
+			if (flagBottomTape) {
+				glGenVertexArrays(1, &vaoBottomTape);
+				glBindVertexArray(vaoBottomTape);
+				glGenBuffers(1, &vboBottomTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
 
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-				((GLubyte *)nullptr + (0)));
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
 
-			//MULTICOLOR
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
+					((GLubyte *)nullptr + (sizeof(glm::vec3))));
 
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-				((GLubyte *)nullptr + (sizeof(glm::vec3))));
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
 
-			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+				glGenBuffers(1, &iboBottomTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
 
-			glGenBuffers(1, &iboTopTape);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
+				glBindVertexArray(vaoBottomTape);
 
-			glBindVertexArray(vaoTopTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
-			glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-		}
+			if (flagTopTape) {
+				glGenVertexArrays(1, &vaoTopTape);
+				glBindVertexArray(vaoTopTape);
+				glGenBuffers(1, &vboTopTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
 
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
+					((GLubyte *)nullptr + (sizeof(glm::vec3))));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboTopTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoTopTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
+		}	
 	}else {
 		if(nShader == "ADS") {
-			
+			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+			shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+			shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(50.0, 50.0, 50.0, 1.0)));
+			shader->setUniform("Ka", glm::vec3(0.85, 0.65, 0.12));
+			shader->setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Ia", 0.2f * glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Id", 0.5f * glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Is", 0.3f * glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Shininess", 50.0f);
+
+			glGenVertexArrays(1, &vao);
+			glBindVertexArray(vao);
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+				((GLubyte *)nullptr + (0)));
+
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+				((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+
+			glGenBuffers(1, &ibo);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
+
+			glBindVertexArray(vao);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glEnable(GL_PRIMITIVE_RESTART);
+			glPrimitiveRestartIndex(0xFFFF);
+			glDrawElements(GL_TRIANGLE_STRIP, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+
+			if (flagBottomTape) {
+				glGenVertexArrays(1, &vaoBottomTape);
+				glBindVertexArray(vaoBottomTape);
+				glGenBuffers(1, &vboBottomTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+					((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboBottomTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoBottomTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
+
+			if (flagTopTape) {
+				glGenVertexArrays(1, &vaoTopTape);
+				glBindVertexArray(vaoTopTape);
+				glGenBuffers(1, &vboTopTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+					((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboTopTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoTopTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
 		}
 		if(nShader == "Test") {
-			
+			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+			shader->setUniform("pointSize", 4.0f);
+
+			glGenVertexArrays(1, &vao);
+			glBindVertexArray(vao);
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+				((GLubyte *)nullptr + (0)));
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+
+			glGenBuffers(1, &ibo);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
+
+			glBindVertexArray(vao);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glEnable(GL_PRIMITIVE_RESTART);
+			glPrimitiveRestartIndex(0xFFFF);
+			glDrawElements(GL_TRIANGLE_STRIP, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+
+			if (flagBottomTape) {
+				glGenVertexArrays(1, &vaoBottomTape);
+				glBindVertexArray(vaoBottomTape);
+				glGenBuffers(1, &vboBottomTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboBottomTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoBottomTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
+
+			if (flagTopTape) {
+				glGenVertexArrays(1, &vaoTopTape);
+				glBindVertexArray(vaoTopTape);
+				glGenBuffers(1, &vboTopTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboTopTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoTopTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
 		}
 		if(nShader == "Texture") {
-			
+			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+			shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+			shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(50.0, 50.0, 50.0, 1.0)));
+			shader->setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Ia", 0.2f * glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Id", 0.5f * glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Is", 0.3f * glm::vec3(1.0, 1.0, 1.0));
+			shader->setUniform("Shininess", 50.0f);
+			shader->setUniform("TexSamplerColor", 0);
+
+			glGenVertexArrays(1, &vao);
+			glBindVertexArray(vao);
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+				((GLubyte *)nullptr + (0)));
+
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+				((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
+				((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+
+			glGenBuffers(1, &ibo);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
+
+			glBindVertexArray(vao);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, renderer->getTexture(nombreTextura));
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glEnable(GL_PRIMITIVE_RESTART);
+			glPrimitiveRestartIndex(0xFFFF);
+			glDrawElements(GL_TRIANGLE_STRIP, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+
+			if (flagBottomTape) {
+				glGenVertexArrays(1, &vaoBottomTape);
+				glBindVertexArray(vaoBottomTape);
+				glGenBuffers(1, &vboBottomTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+					((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboBottomTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoBottomTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
+
+			if (flagTopTape) {
+				glGenVertexArrays(1, &vaoTopTape);
+				glBindVertexArray(vaoTopTape);
+				glGenBuffers(1, &vboTopTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+					((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+
+				glGenBuffers(1, &iboTopTape);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
+
+				glBindVertexArray(vaoTopTape);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+			}
 		}
-	}
-	if (!shaderCreado) {
-		shader.createShaderProgram("Texture");
-		shaderCreado = true;
-	}
-
-	shader.use();
-
-	/*shader.setUniform("mvpMatrix", _ViewProjectionMatrix);
-	shader.setUniform("pointSize", 4.0f);*/
-
-	/*
-	 * NOTA: alternar entre los setUniform de arriba(Test) y abajo(ADS) en funcion del shader
-	 * que se quiera utilizar
-	 */
-
-	shader.setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
-	shader.setUniform("mModelView", ViewMatrix * ModelMatrix);
-	shader.setUniform("lightPosition",glm::vec3(ViewMatrix * glm::vec4(50.0, 50.0, 50.0, 1.0)));
-	//shader.setUniform("Ka", color);
-	//shader.setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Ia", 0.2f * glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Id", 0.5f * glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Is", 0.3f * glm::vec3(1.0, 1.0, 1.0));
-	shader.setUniform("Shininess", 50.0f);
-
-	shader.setUniform("TexSamplerColor", 0);
-
-	GLuint vao;
-	GLuint vbo;
-	GLuint ibo;
-
-	GLuint vaoBottomTape;
-	GLuint vboBottomTape;
-	GLuint iboBottomTape;
-
-	GLuint vaoTopTape;
-	GLuint vboTopTape;
-	GLuint iboTopTape;
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-		((GLubyte *)nullptr + (0)));
-
-	//MULTICOLOR
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-		((GLubyte *)nullptr + (sizeof(glm::vec3))));
-
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
-		GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-		((GLubyte *)nullptr + (sizeof(glm::vec3)) + (sizeof(glm::vec3))));
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
-
-	glBindVertexArray(vao);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glEnable(GL_PRIMITIVE_RESTART);
-	glPrimitiveRestartIndex(0xFFFF);
-	glDrawElements(GL_TRIANGLE_STRIP, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-
-	if (flagBottomTape) {
-		glGenVertexArrays(1, &vaoBottomTape);
-		glBindVertexArray(vaoBottomTape);
-		glGenBuffers(1, &vboBottomTape);
-		glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-			((GLubyte *)nullptr + (0)));
-
-		//MULTICOLOR
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-			((GLubyte *)nullptr + (sizeof(glm::vec3))));
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &iboBottomTape);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
-
-		glBindVertexArray(vaoBottomTape);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
-		glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-	}
-
-	if (flagTopTape) {
-		glGenVertexArrays(1, &vaoTopTape);
-		glBindVertexArray(vaoTopTape);
-		glGenBuffers(1, &vboTopTape);
-		glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-			((GLubyte *)nullptr + (0)));
-
-		//MULTICOLOR
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-			GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COLORS
-			((GLubyte *)nullptr + (sizeof(glm::vec3))));
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &iboTopTape);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
-
-		glBindVertexArray(vaoTopTape);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
-		glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-	}
+	}	
 }
 
 /**

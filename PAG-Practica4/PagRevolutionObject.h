@@ -8,10 +8,7 @@
 #include "Pag3DObject.h"
 
 class PagRevolutionObject: public Pag3DObject{
-	PagShaderProgram shader;
 	glm::mat4 ModelMatrix;
-
-	glm::vec3 color;
 
 	//Flags para saber si tiene tapa
 	bool flagBottomTape;
@@ -38,10 +35,7 @@ class PagRevolutionObject: public Pag3DObject{
 	PagVaoData *pointsColorTop;
 	GLuint *_indices;
 	GLuint *_indicesTop;
-	GLuint *_indicesBottom;
-
-	//Booleano para lazy initialization
-	bool shaderCreado;
+	GLuint *_indicesBottom;;
 
 	//String con el nombre de los txt
 	std::string nombreAlumno;
@@ -57,7 +51,7 @@ public:
 	PagRevolutionObject(const PagRevolutionObject &orig);
 	void operator = (const PagRevolutionObject &orig);
 	void createObject() override;
-	void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
+	//void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
 	void draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) override;
 
 

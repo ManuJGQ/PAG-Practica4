@@ -9,7 +9,7 @@ class PagRenderer;
 class Pag3DElement{
 	glm::mat4 ModelMatrix;
 public:
-	virtual void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) = 0;
+	//virtual void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) = 0;
 	virtual void draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) = 0;
 	virtual void createObject() = 0;
 	Pag3DElement();
