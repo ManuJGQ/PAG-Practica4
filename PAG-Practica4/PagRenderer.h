@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include "PagTexture.h"
+#include "PagLight.h"
 #include <iterator>
 
 class PagRenderer{
@@ -14,6 +15,7 @@ class PagRenderer{
 	
 	std::vector<PagShaderProgram*> shaders;
 	std::map<std::string, PagTexture> textures;
+	std::vector<PagLight> lights;
 	Structs::Fichero *ficheros;
 
 	std::string nombreShader;
