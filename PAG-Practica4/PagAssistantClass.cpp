@@ -47,6 +47,8 @@ PagRevolutionObject PagAssistantClass::leerDatos(Structs::Fichero _fichero) cons
 		PuntosPerfil *perfil = new PuntosPerfil[numPuntosPerfilOriginal];
 		PuntosPerfil puntos;
 
+		int alturaMasBaja = 0;
+
 		for (int i = 0; i < numPuntosPerfilOriginal; i++) {
 			//Leemos los puntos del Perfil
 			std::getline(archivoPuntosPerfil, linea_actual);
@@ -66,6 +68,10 @@ PagRevolutionObject PagAssistantClass::leerDatos(Structs::Fichero _fichero) cons
 
 				puntos.y = stof(linea_actual.substr(coma + 1, linea_actual.length()));
 
+				if (puntos.y < alturaMasBaja) {
+					alturaMasBaja = puntos.y;
+				}
+
 				perfil[i] = puntos;
 
 			}
@@ -73,6 +79,14 @@ PagRevolutionObject PagAssistantClass::leerDatos(Structs::Fichero _fichero) cons
 		}
 
 		archivoPuntosPerfil.close();
+
+		if (alturaMasBaja < 0) {
+			alturaMasBaja *= -1;
+
+			for (int i = 0; i < numPuntosPerfilOriginal; i++) {
+				perfil[i].y += alturaMasBaja;
+			}
+		}
 
 		PuntosPerfil *perfilTemp = new PuntosPerfil[numPuntosPerfilOriginal];
 		for (int i = 0; i < numPuntosPerfilOriginal; i++) {
