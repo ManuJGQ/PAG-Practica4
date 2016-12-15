@@ -977,6 +977,11 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
 					((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
 
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
+					((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
+
 				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
 
 				glGenBuffers(1, &iboBottomTape);
@@ -984,6 +989,9 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
 
 				glBindVertexArray(vaoBottomTape);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, renderer->getTexture(nombreTextura));
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
 				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
@@ -1005,6 +1013,12 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
 					((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
 
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
+					((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
+
+
 				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
 
 				glGenBuffers(1, &iboTopTape);
@@ -1012,6 +1026,9 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
 
 				glBindVertexArray(vaoTopTape);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, renderer->getTexture(nombreTextura));
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
 				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
