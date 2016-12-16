@@ -80,11 +80,11 @@ PagRevolutionObject PagAssistantClass::leerDatos(Structs::Fichero _fichero) cons
 
 		archivoPuntosPerfil.close();
 
-		if (alturaMasBaja < 0) {
+		if (alturaMasBaja < 1) {
 			alturaMasBaja *= -1;
 
 			for (int i = 0; i < numPuntosPerfilOriginal; i++) {
-				perfil[i].y += alturaMasBaja;
+				perfil[i].y += (alturaMasBaja + 1);
 			}
 		}
 

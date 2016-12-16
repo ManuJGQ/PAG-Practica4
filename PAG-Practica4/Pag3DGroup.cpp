@@ -1,15 +1,6 @@
 #include "Pag3DGroup.h"
 #include "PagRevolutionObject.h"
-
-/**
- * Funcion para pintar en nube de puntos todos los Pag3DElements que tenga
- * el Group
- */
-//void Pag3DGroup::drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
-//	for (int i = 0; i < numObjects; i++) {
-//		elements[i]->drawPointsCloud(ViewMatrix, ProjectionMatrix);
-//	}
-//}
+#include "PagTable.h"
 
 /**
 * Funcion para pintar en modo solido todos los Pag3DElements que tenga
@@ -31,11 +22,12 @@ Pag3DGroup::Pag3DGroup() : elements(nullptr), numObjects(0) {
 /**
  * Constructor pasandole un conjunto de Ficheros txt
  */
-Pag3DGroup::Pag3DGroup(Structs::Fichero ficheros[], int _numObjects) : numObjects(_numObjects) {
+Pag3DGroup::Pag3DGroup(Structs::Fichero ficheros[], int _numObjects) : numObjects(_numObjects + 1) {
 	ModelMatrix = glm::mat4(1.0f);
 	elements = new Pag3DElement*[numObjects];
 	for (int i = 0; i < numObjects; i++) {
-		elements[i] = new PagRevolutionObject(ficheros[i]);
+		if (i == 0)elements[i] = new PagTable();
+		else elements[i] = new PagRevolutionObject(ficheros[i - 1]);
 	}
 }
 
@@ -72,9 +64,16 @@ void Pag3DGroup::operator=(const Pag3DGroup& orig) {
 	numObjects = orig.numObjects;
 	elements = new Pag3DElement*[numObjects];
 	for (int i = 0; i < numObjects; i++) {
-		PagRevolutionObject* object = dynamic_cast<PagRevolutionObject*>(orig.elements[i]);
-		if (object != nullptr) {
-			elements[i] = new PagRevolutionObject(*object);
+		if(i == 0) {
+			PagTable* object = dynamic_cast<PagTable*>(orig.elements[i]);
+			if (object != nullptr) {
+				elements[i] = new PagTable(*object);
+			}
+		}else {
+			PagRevolutionObject* object = dynamic_cast<PagRevolutionObject*>(orig.elements[i]);
+			if (object != nullptr) {
+				elements[i] = new PagRevolutionObject(*object);
+			}
 		}
 	}
 }
