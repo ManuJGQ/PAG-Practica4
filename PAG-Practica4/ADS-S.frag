@@ -34,7 +34,8 @@ vec3 ads(){
 	vec3 specular;
 	specular = (Is * Ks * pow( max( dot(r,v), 0.0), Shininess));
 	float sf;
-	if(dot(-l,lightDirection) >= cos(y)){
+	float Y = (y * 3.14) / 180;
+	if(dot(-l,lightDirection) >= cos(Y)){
 		sf = pow( dot(-l,d), s);
 	}else{
 		sf = 0;

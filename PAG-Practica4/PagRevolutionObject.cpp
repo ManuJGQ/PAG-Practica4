@@ -970,6 +970,8 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				shader->setUniform("Id", light->Id * glm::vec3(1.0, 1.0, 1.0));
 				shader->setUniform("Is", light->Is * glm::vec3(1.0, 1.0, 1.0));
 				shader->setUniform("Shininess", light->shininess);
+				shader->setUniform("y", light->y);
+				shader->setUniform("s", light->s);
 				shader->setUniform("TexSamplerColor", 0);
 
 			}
