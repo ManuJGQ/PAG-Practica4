@@ -130,16 +130,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ADS.frag" />
-    <None Include="ADS.vert" />
+    <None Include="ADS-D.frag" />
+    <None Include="ADS-D.vert" />
+    <None Include="ADS-P.frag" />
+    <None Include="ADS-P.vert" />
+    <None Include="ADS-S.frag" />
+    <None Include="ADS-S.vert" />
     <None Include="points.frag" />
     <None Include="points.vert" />
     <None Include="pointsMultiColor.frag" />
     <None Include="pointsMultiColor.vert" />
     <None Include="Test.frag" />
     <None Include="Test.vert" />
-    <None Include="Texture.frag" />
-    <None Include="Texture.vert" />
+    <None Include="Texture-D.frag" />
+    <None Include="Texture-D.vert" />
+    <None Include="Texture-P.frag" />
+    <None Include="Texture-P.vert" />
+    <None Include="Texture-S.frag" />
+    <None Include="Texture-S.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pag3DElement.h" />

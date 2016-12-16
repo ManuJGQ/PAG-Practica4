@@ -15,7 +15,12 @@ uniform float Shininess;
 layout (location = 0) out vec4 FragColor;
 
 vec3 ads(){
-	vec3 n = normalize( normal );
+	vec3 n;
+	if (gl_FrontFacing){
+		n = normalize( normal );
+	}else{
+		n = normalize( -normal );
+	}
 	vec3 l = normalize( lightPosition-position );
 	vec3 v = normalize( -position );
 	vec3 r = reflect( -l, n );

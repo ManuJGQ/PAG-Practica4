@@ -5,13 +5,15 @@ in vec3 normal;
 in vec2 texCoord;
 
 uniform vec3 lightPosition;
-//uniform vec3 Ka;
-//uniform vec3 Kd;
+uniform vec3 lightDirection;
 uniform vec3 Ks;
 uniform vec3 Ia;
 uniform vec3 Id;
 uniform vec3 Is;
 uniform float Shininess;
+
+uniform float y;
+uniform float s;
 
 uniform sampler2D TexSamplerColor;
 
@@ -39,7 +41,12 @@ vec3 ads(vec4 texColor){
 	}else{
 		specular = (Is * Ks * pow( max( dot(r,v), 0.0), Shininess));
 	}
-	return ambient + diffuse + specular;
+	if(dot(-l,lightDirection) >= cos(y)){
+		sf = pow( (-l * d), s)
+	}else{
+		sf = 0
+	}
+	return ambient + sf * (diffuse + specular);
 }
 
 void main() {
