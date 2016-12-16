@@ -52,7 +52,7 @@ public:
 	void operator = (const PagRevolutionObject &orig);
 	void createObject() override;
 	//void drawPointsCloud(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) override;
-	void draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) override;
+	void draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer, PagLight light) override;
 
 
 	//Metodos Gets

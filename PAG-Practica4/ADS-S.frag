@@ -33,11 +33,11 @@ vec3 ads(){
 	vec3 diffuse = (Id * Kd * max( dot(l,n), 0.0));
 	vec3 specular;
 	specular = (Is * Ks * pow( max( dot(r,v), 0.0), Shininess));
-	int sf;
+	float sf;
 	if(dot(-l,lightDirection) >= cos(y)){
-		sf = pow( (-l * d), s)
+		sf = pow( dot(-l,d), s);
 	}else{
-		sf = 0
+		sf = 0;
 	}
 	return ambient + sf * (diffuse + specular);
 }

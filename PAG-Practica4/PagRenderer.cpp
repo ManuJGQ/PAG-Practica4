@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+#include <set>
+
 #include <algorithm>
 #include "dirent.h"
 
@@ -59,6 +61,10 @@ PagRenderer::PagRenderer() {
 }
 
 void PagRenderer::cargarEscena() {
+	//Cargamos las luces
+	lights.push_back(PagLight(glm::vec3(50.0, 50.0, 50.0), 0.2f, 0.5f, 0.3f, glm::vec3(0.85, 0.65, 0.12), glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), 'P', 50.0f));
+	
+
 	//Creamos las Geometrias y Topologias de los diferentes objetos que componen la escena
 	objects.createObject();
 
@@ -85,6 +91,9 @@ void PagRenderer::cargarEscena() {
 	DIR *dirS = opendir("Textures/..");
 
 	dirent *entryS;
+
+	std::set<std::string> shadersNames;
+
 	while ((entryS = readdir(dirS)) != nullptr) {
 		if (has_suffix(entryS->d_name, ".frag")) {
 
@@ -100,15 +109,22 @@ void PagRenderer::cargarEscena() {
 				int ind = name.find_last_of(".");
 				name = name.substr(0, ind);
 
+				ind = name.find_last_of("-");
+				std::string name2 = name.substr(0, ind);
+
+				std::cout << name2 << std::endl;
+
 				PagShaderProgram *shader = new PagShaderProgram();
 
 				shader->createShaderProgram(name.c_str());
 
 				shaders.push_back(shader);
-
-				nombreShaders.push_back(name);
-
-				std::cout << "[" << shaders.size() - 1 << "] - " << name << std::endl;
+				
+				if (shadersNames.find(name2) == shadersNames.end()) {
+					nombreShaders.push_back(name2);
+					std::cout << "[" << shaders.size() - 1 << "] - " << name2 << std::endl;
+					shadersNames.insert(name2);
+				}
 
 			}
 
@@ -123,7 +139,9 @@ void PagRenderer::cargarEscena() {
 }
 
 void PagRenderer::pintarEscena(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
-	objects.draw(ViewMatrix, ProjectionMatrix, this);
+	for(int i=0;i<lights.size();i++) {
+		objects.draw(ViewMatrix, ProjectionMatrix, this, lights[i]);
+	}
 }
 
 PagRenderer::~PagRenderer(){

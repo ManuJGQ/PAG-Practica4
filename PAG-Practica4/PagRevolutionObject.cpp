@@ -566,7 +566,7 @@ void PagRevolutionObject::createObject() {
 /**
  * Funcion encargada de pintar el PagRevolutionObject en todos los modos posibles
  */
-void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer) {
+void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer, PagLight light) {
 	std::string nShader = renderer->getNombreShader();
 
 	PagShaderProgram* shader = renderer->getShader();
