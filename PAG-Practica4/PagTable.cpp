@@ -20,7 +20,7 @@ void PagTable::createObject(){
 }
 
 
-void PagTable::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer * renderer, PagLight light){
+void PagTable::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer * renderer, PagLight* light){
 	table.draw(ViewMatrix, ProjectionMatrix, renderer, light);
 }
 

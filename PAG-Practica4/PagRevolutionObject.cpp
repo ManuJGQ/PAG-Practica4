@@ -2,6 +2,7 @@
 #include "PagAssistantClass.h"
 
 #include <math.h>
+#include <string>
 
 #include "PagRenderer.h"
 
@@ -566,12 +567,8 @@ void PagRevolutionObject::createObject() {
 /**
  * Funcion encargada de pintar el PagRevolutionObject en todos los modos posibles
  */
-void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer, PagLight light) {
+void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, PagRenderer* renderer, PagLight* light) {
 	std::string nShader = renderer->getNombreShader();
-
-	PagShaderProgram* shader = renderer->getShader();
-
-	shader->use();
 
 	GLuint vao;
 	GLuint vbo;
@@ -587,6 +584,10 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 
 	if(nShader == "points" || nShader == "pointsMultiColor") {
 		if(nShader == "points") {
+			PagShaderProgram* shader = renderer->getShader("points");
+
+			shader->use();
+
 			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 			shader->setUniform("vColor", glm::vec3(0.85, 0.65, 0.12));
 			shader->setUniform("pointSize", 4.0f);
@@ -659,6 +660,10 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 			}
 		}
 		if(nShader == "pointsMultiColor") {
+			PagShaderProgram* shader = renderer->getShader("pointsMultiColor");
+
+			shader->use();
+
 			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 			shader->setUniform("pointSize", 4.0f);
 			
@@ -746,6 +751,10 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 		}	
 	}else {
 		if(nShader == "ADS") {
+			PagShaderProgram* shader = renderer->getShader("ADS");
+
+			shader->use();
+
 			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 			shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
 			shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(50.0, 50.0, 50.0, 1.0)));
@@ -842,6 +851,10 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 			}
 		}
 		if(nShader == "Test") {
+			PagShaderProgram* shader = renderer->getShader("Test");
+
+			shader->use();
+
 			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 			shader->setUniform("pointSize", 4.0f);
 
@@ -915,15 +928,51 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 			}
 		}
 		if(nShader == "Texture") {
-			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
-			shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
-			shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(50.0, 50.0, 50.0, 1.0)));
-			shader->setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Ia", 0.2f * glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Id", 0.5f * glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Is", 0.3f * glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Shininess", 50.0f);
-			shader->setUniform("TexSamplerColor", 0);
+			std::string name = "Texture-";
+			char l = light->light;
+			name += l;
+			PagShaderProgram* shader = renderer->getShader(name);
+
+			shader->use();
+
+			if(l == 'P') {
+
+				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+				shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(light->position, 1.0)));
+				shader->setUniform("Ks", light->Ks);
+				shader->setUniform("Ia", light->Ia * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Id", light->Id * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Is", light->Is * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Shininess", light->shininess);
+				shader->setUniform("TexSamplerColor", 0);
+
+			}else if (l == 'D') {
+
+				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+				shader->setUniform("lightDirection", glm::vec3(ViewMatrix * glm::vec4(light->direction, 0.0)));
+				shader->setUniform("Ks", light->Ks);
+				shader->setUniform("Ia", light->Ia * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Id", light->Id * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Is", light->Is * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Shininess", light->shininess);
+				shader->setUniform("TexSamplerColor", 0);
+
+			}else if (l == 'S') {
+
+				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+				shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(light->position, 1.0)));
+				shader->setUniform("lightDirection", glm::vec3(ViewMatrix * glm::vec4(light->direction, 0.0)));
+				shader->setUniform("Ks", light->Ks);
+				shader->setUniform("Ia", light->Ia * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Id", light->Id * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Is", light->Is * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Shininess", light->shininess);
+				shader->setUniform("TexSamplerColor", 0);
+
+			}
 
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);

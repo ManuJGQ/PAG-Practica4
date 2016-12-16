@@ -118,11 +118,11 @@ void PagRenderer::cargarEscena() {
 
 				shader->createShaderProgram(name.c_str());
 
-				shaders.push_back(shader);
+				shaders.insert_or_assign(name, shader);
 				
 				if (shadersNames.find(name2) == shadersNames.end()) {
 					nombreShaders.push_back(name2);
-					std::cout << "[" << shaders.size() - 1 << "] - " << name2 << std::endl;
+					std::cout << "[" << nombreShaders.size() - 1 << "] - " << name2 << std::endl;
 					shadersNames.insert(name2);
 				}
 
@@ -132,6 +132,7 @@ void PagRenderer::cargarEscena() {
 	}
 	closedir(dirS);
 
+	int s;
 	std::cout << "Escoja el nº del shader a usar: ";
 	std::cin >> s;
 
@@ -140,7 +141,7 @@ void PagRenderer::cargarEscena() {
 
 void PagRenderer::pintarEscena(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix) {
 	for(int i=0;i<lights.size();i++) {
-		objects.draw(ViewMatrix, ProjectionMatrix, this, lights[i]);
+		objects.draw(ViewMatrix, ProjectionMatrix, this, &lights[i]);
 	}
 }
 

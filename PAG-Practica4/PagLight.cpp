@@ -18,6 +18,8 @@ PagLight::PagLight(glm::vec3 _positionDirection, float _Ia, float _Id, float _Is
 		Kd = _Kd;
 		Ks = _Ks;
 
+		shininess = _shininess;
+
 	}else if(_light == 'D') {
 		
 		light = 'D';
@@ -57,6 +59,54 @@ PagLight::PagLight(glm::vec3 _position, glm::vec3 _direction, float _Ia, float _
 
 	shininess = _shininess;
 
+}
+
+PagLight::PagLight(const PagLight & orig){
+	light = orig.light;
+	if(light == 'S') {
+		position = orig.position;
+		direction = orig.direction;
+
+		Ia = orig.Ia;
+		Id = orig.Id;
+		Is = orig.Is;
+		Ka = orig.Ka;
+		Kd = orig.Kd;
+		Ks = orig.Ks;
+
+		y = orig.y;
+		s = orig.s;
+
+		shininess = orig.shininess;
+	}else {
+		if(light == 'P') {
+			position = orig.position;
+
+			Ia = orig.Ia;
+			Id = orig.Id;
+			Is = orig.Is;
+			Ka = orig.Ka;
+			Kd = orig.Kd;
+			Ks = orig.Ks;
+
+			shininess = orig.shininess;
+		}else {
+			direction = orig.direction;
+
+			Ia = orig.Ia;
+			Id = orig.Id;
+			Is = orig.Is;
+			Ka = orig.Ka;
+			Kd = orig.Kd;
+			Ks = orig.Ks;
+
+			shininess = orig.shininess;
+		}
+	}
+}
+
+void PagLight::operator=(const PagLight & orig){
+	*this = orig;
 }
 
 
