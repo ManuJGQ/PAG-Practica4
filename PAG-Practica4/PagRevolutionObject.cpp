@@ -1011,9 +1011,53 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 
 			if(!primitivasRellenadas) {
 				glGenVertexArrays(1, &vao);
-				glBindVertexArray(vao);
 				glGenBuffers(1, &vbo);
-				glBindBuffer(GL_ARRAY_BUFFER, vbo);
+				glGenBuffers(1, &ibo);
+			}
+
+			glBindVertexArray(vao);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+				((GLubyte *)nullptr + (0)));
+
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+				((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
+				GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
+				((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
+
+			glBindVertexArray(vao);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, renderer->getTexture(nombreTextura));
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glEnable(GL_PRIMITIVE_RESTART);
+			glPrimitiveRestartIndex(0xFFFF);
+			glDrawElements(GL_TRIANGLE_STRIP, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+
+			if (flagBottomTape) {
+				if(!primitivasRellenadas) {
+					glGenVertexArrays(1, &vaoBottomTape);
+					glGenBuffers(1, &vboBottomTape);
+					glGenBuffers(1, &iboBottomTape);
+				}
+				
+				glBindVertexArray(vaoBottomTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
 
 				glEnableVertexAttribArray(0);
 				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
@@ -1030,52 +1074,10 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
 					((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
 
-				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * tamaGeometriaCoordText, pointsColor, GL_STATIC_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
 
-				glGenBuffers(1, &ibo);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (tamaIndices), _indices, GL_STATIC_DRAW);
-			}
-
-			glBindVertexArray(vao);
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, renderer->getTexture(nombreTextura));
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-			glEnable(GL_PRIMITIVE_RESTART);
-			glPrimitiveRestartIndex(0xFFFF);
-			glDrawElements(GL_TRIANGLE_STRIP, (sizeof(GLuint) * (tamaIndices)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
-
-			if (flagBottomTape) {
-				if(!primitivasRellenadas) {
-					glGenVertexArrays(1, &vaoBottomTape);
-					glBindVertexArray(vaoBottomTape);
-					glGenBuffers(1, &vboBottomTape);
-					glBindBuffer(GL_ARRAY_BUFFER, vboBottomTape);
-
-					glEnableVertexAttribArray(0);
-					glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-						GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-						((GLubyte *)nullptr + (0)));
-
-					glEnableVertexAttribArray(1);
-					glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-						GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
-						((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
-
-					glEnableVertexAttribArray(2);
-					glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
-						GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
-						((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
-
-					glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorBottom, GL_STATIC_DRAW);
-
-					glGenBuffers(1, &iboBottomTape);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
-				}
-				
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBottomTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesBottom, GL_STATIC_DRAW);
 
 				glBindVertexArray(vaoBottomTape);
 
@@ -1089,33 +1091,33 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 			if (flagTopTape) {
 				if(!primitivasRellenadas) {
 					glGenVertexArrays(1, &vaoTopTape);
-					glBindVertexArray(vaoTopTape);
 					glGenBuffers(1, &vboTopTape);
-					glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
-
-					glEnableVertexAttribArray(0);
-					glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
-						GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
-						((GLubyte *)nullptr + (0)));
-
-					glEnableVertexAttribArray(1);
-					glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
-						GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
-						((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
-
-					glEnableVertexAttribArray(2);
-					glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
-						GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
-						((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
-
-
-					glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
-
 					glGenBuffers(1, &iboTopTape);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
 				}
 				
+				glBindVertexArray(vaoTopTape);
+				glBindBuffer(GL_ARRAY_BUFFER, vboTopTape);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//POSITIONS
+					((GLubyte *)nullptr + (0)));
+
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, sizeof(glm::vec3) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//NORMALS
+					((GLubyte *)nullptr + 2 * (sizeof(glm::vec3))));
+
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, sizeof(glm::vec2) / sizeof(GLfloat),
+					GL_FLOAT, GL_FALSE, sizeof(PagVaoData),						//COORDTEXTS
+					((GLubyte *)nullptr + 3 * (sizeof(glm::vec3))));
+
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(PagVaoData) * (slices + 1), pointsColorTop, GL_STATIC_DRAW);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * (slices + 1), _indicesTop, GL_STATIC_DRAW);
 
 				glBindVertexArray(vaoTopTape);
 
