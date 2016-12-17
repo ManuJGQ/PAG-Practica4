@@ -37,6 +37,20 @@ class PagRevolutionObject: public Pag3DObject{
 	GLuint *_indicesTop;
 	GLuint *_indicesBottom;;
 
+	GLuint vao;
+	GLuint vbo;
+	GLuint ibo;
+
+	GLuint vaoBottomTape;
+	GLuint vboBottomTape;
+	GLuint iboBottomTape;
+
+	GLuint vaoTopTape;
+	GLuint vboTopTape;
+	GLuint iboTopTape;
+
+	bool primitivasRellenadas;
+
 	//String con el nombre de los txt
 	std::string nombreAlumno;
 

@@ -62,8 +62,9 @@ PagRenderer::PagRenderer() {
 
 void PagRenderer::cargarEscena() {
 	//Cargamos las luces
-	lights.push_back(PagLight(glm::vec3(0.0,60.0,0.0), glm::vec3(0.0, -1.0, 0.0), 0.2f, 0.5f, 0.4f, glm::vec3(0.85, 0.65, 0.12), glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), 10.0f, 5.0f, 50.0f));
-	
+	lights.push_back(PagLight(glm::vec3(0.0,100.0,0.0), glm::vec3(0.0, -1.0, 0.0), 0.2f, 0.5f, 0.3f, glm::vec3(0.85, 0.65, 0.12), glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), 7.0f, 5.0f, 50.0f));
+	lights.push_back(PagLight(glm::vec3(-0.28, 0.0, 0.92), 0.1f, 0.25f, 0.15f, glm::vec3(0.85, 0.65, 0.12), glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), 'D', 50.0f));
+	lights.push_back(PagLight(glm::vec3(-15.0, 15.0, 50.0), 0.05f, 0.125f, 0.75f, glm::vec3(0.85, 0.65, 0.12), glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), 'P', 50.0f));
 
 	//Creamos las Geometrias y Topologias de los diferentes objetos que componen la escena
 	objects.createObject();
