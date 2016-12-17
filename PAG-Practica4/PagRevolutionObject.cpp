@@ -262,7 +262,6 @@ void PagRevolutionObject::createObject() {
 			for (int i = 0; i < slices; i++) {
 				PuntosVertices vert;
 				if (i == slices - 1) {
-					/*std::cout << i << std::endl;*/
 					vert = geometria[(j - cambioIndice) * slices].vertice;
 				}
 				else {
