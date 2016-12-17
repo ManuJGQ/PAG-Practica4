@@ -27,6 +27,8 @@ vec3 ads(vec4 texColor){
 		n = normalize( -normal );
 	}
 
+	n = normalize( normal );
+
 	vec3 Kad = texColor.rgb;
 
 	vec3 l = normalize( lightPosition-position );

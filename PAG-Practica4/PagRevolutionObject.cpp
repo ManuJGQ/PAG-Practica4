@@ -204,11 +204,6 @@ void PagRevolutionObject::operator=(const PagRevolutionObject & orig) {
  * Funcion encargada de crear la Geometria y Topologia del PagRevolutionObject
  */
 void PagRevolutionObject::createObject() {
-	/*if (nombreAlumno == "maceta")color = glm::vec3(0.6, 0.3, 0.0);
-	else if (nombreAlumno == "tronco")color = glm::vec3(0.4, 0.2, 0.0);
-	else if (nombreAlumno == "arbol")color = glm::vec3(0.0, 0.6, 0.0);
-	else color = glm::vec3(1.0, 0.5, 0.0);*/
-
 	int numPuntosPerfil = subdivisionProfiles.getNumPuntosPerfil();
 
 	int numTapas = 0;
@@ -265,10 +260,11 @@ void PagRevolutionObject::createObject() {
 		else {
 			for (int i = 0; i < slices; i++) {
 				PuntosVertices vert;
-				if(i == slices - 1) {
+				if (i == slices - 1) {
 					/*std::cout << i << std::endl;*/
-					vert = geometria[(j - cambioIndice) * slices ].vertice;
-				}else {
+					vert = geometria[(j - cambioIndice) * slices].vertice;
+				}
+				else {
 					double x = perfil[j].x * cos(angleRadIncrement * i);
 					double z = perfil[j].x * -sin(angleRadIncrement * i);
 
@@ -297,9 +293,6 @@ void PagRevolutionObject::createObject() {
 			normal.z = 0;
 
 			geometriaBottomTape[slices].normal = normal;
-			/*for (int i = 0; i < slices; i++) {
-				geometriaBottomTape[i].normal = normal;
-			}*/
 		}
 		else if (j == numPuntosPerfil - 1 && flagTopTape) {
 			NormalesTangentes normal;
@@ -309,78 +302,70 @@ void PagRevolutionObject::createObject() {
 			normal.z = 0;
 
 			geometriaTopTape[slices].normal = normal;
-			/*for (int i = 0; i < slices; i++) {
-				geometriaTopTape[i].normal = normal;
-			}*/
 		}
 		else {
+			PuntosVertices p1;
+			PuntosVertices p2;
+
+			if (j == 0) p1 = { 0,0,0 };
+			else if (j == 1 && flagBottomTape) p1 = geometriaBottomTape[slices].vertice;
+			else p1 = geometria[(j - cambioIndice - 1) * slices].vertice;
+
+			PuntosVertices pi = geometria[(j - cambioIndice) * slices].vertice;
+
+			if (j == numPuntosPerfil - 1)  p2 = { 0,0,0 };
+			else if (j == numPuntosPerfil - 2 && flagTopTape) p2 = geometriaTopTape[slices].vertice;
+			else p2 = geometria[(j - cambioIndice + 1) * slices].vertice;
+
+			PuntosVertices v1;
+			v1.x = pi.x - p1.x;
+			v1.y = pi.y - p1.y;
+			v1.z = pi.z - p1.z;
+
+			double modV1 = sqrt((v1.x * v1.x) + (v1.y * v1.y) + (v1.z * v1.z));
+			v1.x = v1.x / modV1;
+			v1.y = v1.y / modV1;
+			v1.z = v1.z / modV1;
+
+			double xTemp = v1.x;
+			v1.x = v1.y;
+			v1.y = xTemp * -1;
+
+			PuntosVertices vi;
+			vi.x = p2.x - pi.x;
+			vi.y = p2.y - pi.y;
+			vi.z = p2.z - pi.z;
+
+			double modVi = sqrt((vi.x * vi.x) + (vi.y * vi.y) + (vi.z * vi.z));
+			vi.x = vi.x / modVi;
+			vi.y = vi.y / modVi;
+			vi.z = vi.z / modVi;
+
+			xTemp = vi.x;
+			vi.x = vi.y;
+			vi.y = xTemp * -1;
+
+			if (j == 0) v1 = vi;
+			if (j == numPuntosPerfil - 1) vi = v1;
+
+			NormalesTangentes normal;
+
+			normal.x = (v1.x + vi.x) / 2;
+			normal.y = (v1.y + vi.y) / 2;
+			normal.z = (v1.z + vi.z) / 2;
+
 			for (int i = 0; i < slices; i++) {
-					PuntosVertices p1;
-					PuntosVertices p2;
-
-					if (j == 0) p1 = { 0,0,0 };
-					else if(j == 1 && flagBottomTape) p1 = geometriaBottomTape[slices].vertice;
-					else p1 = geometria[(j - cambioIndice - 1) * slices + i].vertice;
-
-					PuntosVertices pi = geometria[(j - cambioIndice) * slices + i].vertice;
-
-					if (j == numPuntosPerfil - 1)  p2 = { 0,0,0 };
-					else if(j == numPuntosPerfil - 2 && flagTopTape) p2 = geometriaTopTape[slices].vertice;
-					else p2 = geometria[(j - cambioIndice + 1) * slices + i].vertice;
-
-					PuntosVertices v1;
-					v1.x = pi.x - p1.x;
-					v1.y = pi.y - p1.y;
-					v1.z = pi.z - p1.z;
-
-					double modV1 = sqrt((v1.x * v1.x) + (v1.y * v1.y) + (v1.z * v1.z));
-					v1.x = v1.x / modV1;
-					v1.y = v1.y / modV1;
-					v1.z = v1.z / modV1;
-
-					double xTemp = v1.x;
-					v1.x = v1.y;
-					v1.y = xTemp * -1;
-
-					PuntosVertices vi;
-					vi.x = p2.x - pi.x;
-					vi.y = p2.y - pi.y;
-					vi.z = p2.z - pi.z;
-
-					double modVi = sqrt((vi.x * vi.x) + (vi.y * vi.y) + (vi.z * vi.z));
-					vi.x = vi.x / modVi;
-					vi.y = vi.y / modVi;
-					vi.z = vi.z / modVi;
-
-					xTemp = vi.x;
-					vi.x = vi.y;
-					vi.y = xTemp * -1;
-
-					if (j == 0) v1 = vi;
-					if (j == numPuntosPerfil - 1) vi = v1;
-
-					NormalesTangentes normal;
-
-					normal.x = (v1.x + vi.x) / 2;
-					normal.y = (v1.y + vi.y) / 2;
-					normal.z = (v1.z + vi.z) / 2;
-
-				geometria[(j - cambioIndice) * slices + i].normal = normal;
-				//if (i == 0)geometria[(j - cambioIndice) * slices + slices - 1].normal = normal;
+				NormalesTangentes normal2;
+				normal2.x = normal.x * cos(angleRadIncrement * i);
+				normal2.z = normal.x * -sin(angleRadIncrement * i);
+				normal2.y = normal.y;
+				geometria[(j - cambioIndice) * slices + i].normal = normal2;
 				if (j == numPuntosPerfil - 2 && flagTopTape) {
-					geometriaTopTape[i].normal = normal;
-					//if (i == 0)geometriaTopTape[slices - 1].normal = normal;
+					geometriaTopTape[i].normal = normal2;
 				}
 				if (j == 1 && flagBottomTape) {
-					geometriaBottomTape[i].normal = normal;
-					//if (i == 0)geometriaBottomTape[slices - 1].normal = normal;
+					geometriaBottomTape[i].normal = normal2;
 				}
-
-				/*if (i == 0 || i == slices - 1) {
-					std::cout << "p1: " << p1.x << " " << p1.y << " " << p1.z << std::endl;
-					std::cout << "p2: " << p2.x << " " << p2.y << " " << p2.z << std::endl;
-					std::cout << normal.x << " " << normal.y << " " << normal.z << std::endl;
-				}*/
 			}
 
 		}
@@ -398,9 +383,6 @@ void PagRevolutionObject::createObject() {
 			tangente.z = 0;
 
 			geometriaBottomTape[slices].tangente = tangente;
-			/*for (int i = 0; i < slices; i++) {
-				geometriaBottomTape[i].tangente = tangente;
-			}*/
 		}
 		else if (j == numPuntosPerfil - 1 && flagTopTape) {
 			NormalesTangentes tangente;
@@ -410,9 +392,6 @@ void PagRevolutionObject::createObject() {
 			tangente.z = 0;
 
 			geometriaTopTape[slices].tangente = tangente;
-			/*for (int i = 0; i < slices; i++) {
-				geometriaTopTape[i].tangente = tangente;
-			}*/
 		}
 		else {
 			for (int i = 0; i < slices; i++) {
@@ -423,8 +402,8 @@ void PagRevolutionObject::createObject() {
 				tangente.z = -1 * cos(angleRadIncrement * i);
 
 				geometria[(j - cambioIndice) * slices + i].tangente = tangente;
-				if(j == 1 && flagBottomTape) geometriaBottomTape[i].tangente = tangente;
-				if(j == numPuntosPerfil - 2 && flagTopTape) geometriaTopTape[i].tangente = tangente;
+				if (j == 1 && flagBottomTape) geometriaBottomTape[i].tangente = tangente;
+				if (j == numPuntosPerfil - 2 && flagTopTape) geometriaTopTape[i].tangente = tangente;
 			}
 		}
 	}
@@ -501,7 +480,7 @@ void PagRevolutionObject::createObject() {
 	}
 	if (flagTopTape) {
 		for (int i = 0; i < slices; i++) {
-			indicesTopTape[i] =  i;
+			indicesTopTape[i] = i;
 		}
 		indicesTopTape[slices] = slices;
 	}
@@ -509,7 +488,7 @@ void PagRevolutionObject::createObject() {
 	for (int i = 0; i < slices; i++) {
 		for (int j = 0; j < numPuntosPerfil - numTapas; j++) {
 			indices[k] = i + (j * slices);
-			indices[k + 1] = ((i + 1)%slices) + (j * slices);
+			indices[k + 1] = ((i + 1) % slices) + (j * slices);
 			k += 2;
 		}
 		indices[k] = 0xFFFF;
@@ -539,7 +518,7 @@ void PagRevolutionObject::createObject() {
 				glm::vec3(0.85, 0.65, 0.12),
 				glm::vec3((GLfloat)geometriaBottomTape[i].normal.x, (GLfloat)geometriaBottomTape[i].normal.y, (GLfloat)geometriaBottomTape[i].normal.z),
 				glm::vec2((GLfloat)coordtextBottomTape[i].s, (GLfloat)coordtextBottomTape[i].t),
-				glm::vec3((GLfloat)geometriaBottomTape[i].tangente.x, (GLfloat)geometriaBottomTape[i].tangente.y, (GLfloat)geometriaBottomTape[i].tangente.z) 
+				glm::vec3((GLfloat)geometriaBottomTape[i].tangente.x, (GLfloat)geometriaBottomTape[i].tangente.y, (GLfloat)geometriaBottomTape[i].tangente.z)
 			};
 		}
 
@@ -582,8 +561,8 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 	GLuint vboTopTape;
 	GLuint iboTopTape;
 
-	if(nShader == "points" || nShader == "pointsMultiColor") {
-		if(nShader == "points") {
+	if (nShader == "points" || nShader == "pointsMultiColor") {
+		if (nShader == "points") {
 			PagShaderProgram* shader = renderer->getShader("points");
 
 			shader->use();
@@ -659,14 +638,14 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
 			}
 		}
-		if(nShader == "pointsMultiColor") {
+		if (nShader == "pointsMultiColor") {
 			PagShaderProgram* shader = renderer->getShader("pointsMultiColor");
 
 			shader->use();
 
 			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 			shader->setUniform("pointSize", 4.0f);
-			
+
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);
 			glGenBuffers(1, &vbo);
@@ -748,23 +727,62 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboTopTape);
 				glDrawElements(GL_POINTS, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
 			}
-		}	
-	}else {
-		if(nShader == "ADS") {
-			PagShaderProgram* shader = renderer->getShader("ADS");
+		}
+	}
+	else {
+		if (nShader == "ADS") {
+			std::string name = "ADS-";
+			char l = light->light;
+			name += l;
+			PagShaderProgram* shader = renderer->getShader(name);
 
 			shader->use();
 
-			shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
-			shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
-			shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(50.0, 50.0, 50.0, 1.0)));
-			shader->setUniform("Ka", glm::vec3(0.85, 0.65, 0.12));
-			shader->setUniform("Kd", glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Ks", glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Ia", 0.2f * glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Id", 0.5f * glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Is", 0.3f * glm::vec3(1.0, 1.0, 1.0));
-			shader->setUniform("Shininess", 50.0f);
+			if (l == 'P') {
+
+				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+				shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(light->position, 1.0)));
+				shader->setUniform("Ka", light->Ka);
+				shader->setUniform("Kd", light->Kd);
+				shader->setUniform("Ks", light->Ks);
+				shader->setUniform("Ia", light->Ia * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Id", light->Id * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Is", light->Is * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Shininess", light->shininess);
+
+			}
+			else if (l == 'D') {
+
+				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+				shader->setUniform("lightDirection", glm::vec3(ViewMatrix * glm::vec4(light->direction, 0.0)));
+				shader->setUniform("Ka", light->Ka);
+				shader->setUniform("Kd", light->Kd);
+				shader->setUniform("Ks", light->Ks);
+				shader->setUniform("Ia", light->Ia * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Id", light->Id * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Is", light->Is * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Shininess", light->shininess);
+
+			}
+			else if (l == 'S') {
+
+				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
+				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
+				shader->setUniform("lightPosition", glm::vec3(ViewMatrix * glm::vec4(light->position, 1.0)));
+				shader->setUniform("lightDirection", glm::vec3(ViewMatrix * glm::vec4(light->direction, 0.0)));
+				shader->setUniform("Ka", light->Ka);
+				shader->setUniform("Kd", light->Kd);
+				shader->setUniform("Ks", light->Ks);
+				shader->setUniform("Ia", light->Ia * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Id", light->Id * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Is", light->Is * glm::vec3(1.0, 1.0, 1.0));
+				shader->setUniform("Shininess", light->shininess);
+				shader->setUniform("y", light->y);
+				shader->setUniform("s", light->s);
+
+			}
 
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);
@@ -850,7 +868,7 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
 			}
 		}
-		if(nShader == "Test") {
+		if (nShader == "Test") {
 			PagShaderProgram* shader = renderer->getShader("Test");
 
 			shader->use();
@@ -927,7 +945,7 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
 			}
 		}
-		if(nShader == "Texture") {
+		if (nShader == "Texture") {
 			std::string name = "Texture-";
 			char l = light->light;
 			name += l;
@@ -935,7 +953,7 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 
 			shader->use();
 
-			if(l == 'P') {
+			if (l == 'P') {
 
 				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
@@ -947,7 +965,8 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				shader->setUniform("Shininess", light->shininess);
 				shader->setUniform("TexSamplerColor", 0);
 
-			}else if (l == 'D') {
+			}
+			else if (l == 'D') {
 
 				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
@@ -959,7 +978,8 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				shader->setUniform("Shininess", light->shininess);
 				shader->setUniform("TexSamplerColor", 0);
 
-			}else if (l == 'S') {
+			}
+			else if (l == 'S') {
 
 				shader->setUniform("mvpMatrix", ProjectionMatrix * ViewMatrix * ModelMatrix);
 				shader->setUniform("mModelView", ViewMatrix * ModelMatrix);
@@ -1085,7 +1105,7 @@ void PagRevolutionObject::draw(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix,
 				glDrawElements(GL_TRIANGLE_FAN, (sizeof(GLuint) * (slices + 1)) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
 			}
 		}
-	}	
+	}
 }
 
 /**
